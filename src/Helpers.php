@@ -57,6 +57,19 @@ class Helpers {
 	}
 
 
+	public static function header_valid( string $value ): bool {
+
+		$header = self::header_key( $value );
+
+		if ( ! $header ) {
+			return true;
+		}
+
+		return isset( $_SERVER[ $header ] ) && $_SERVER[ $header ];
+
+	}
+
+
 	public static function caller_path(): string {
 
 		$traced = debug_backtrace(); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace

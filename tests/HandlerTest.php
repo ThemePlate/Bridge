@@ -6,6 +6,7 @@ namespace Tests;
 
 use stdClass;
 use ThemePlate\Bridge\Handler;
+use ThemePlate\Bridge\Helpers;
 use PHPUnit\Framework\TestCase;
 
 final class HandlerTest extends TestCase {
@@ -23,7 +24,7 @@ final class HandlerTest extends TestCase {
 			}
 		);
 
-		$_SERVER[ $handler->header_key() ] = true;
+		$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
 
 		$this->assertTrue( $handler->execute( $method, $params ) );
 	}
@@ -43,7 +44,7 @@ final class HandlerTest extends TestCase {
 		);
 
 		$this->assertTrue( $handler->execute( 'OPTION', array() ) );
-		$this->assertArrayNotHasKey( $handler->header_key(), $_SERVER );
+		$this->assertArrayNotHasKey( Helpers::header_key( $handler->identifier ), $_SERVER );
 		$this->assertNotEmpty( $_SERVER );
 	}
 
@@ -64,7 +65,7 @@ final class HandlerTest extends TestCase {
 				}
 			);
 
-			$_SERVER[ $handler->header_key() ] = true;
+			$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
 
 			$result = $handler->execute( $method, $data[1] );
 
@@ -85,7 +86,7 @@ final class HandlerTest extends TestCase {
 		$handler->handle( '*', $callback );
 		$handler->handle( 'GET', $callback );
 
-		$_SERVER[ $handler->header_key() ] = true;
+		$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
 
 		$this->assertTrue( $handler->execute( 'GET', array() ) );
 		$this->assertTrue( $handler->execute( 'OPTIONS', array() ) );

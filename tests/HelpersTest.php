@@ -72,4 +72,25 @@ final class HelpersTest extends TestCase {
 	public function test_header_key( string $value, string $expected ): void {
 		$this->assertSame( $expected, Helpers::header_key( $value ) );
 	}
+
+	public static function for_header_valid(): array {
+		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+		return array(
+			'empty' => array( '', false, true ),
+			'missing' => array( 'TESTS', false, false ),
+			'found' => array( 'TESTS', true, true ),
+		);
+		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+	}
+
+	#[DataProvider( 'for_header_valid' )]
+	public function test_header_valid( string $value, bool $is_set, bool $expected ): void {
+		if ( $is_set ) {
+			$_SERVER[ Helpers::header_key( $value ) ] = true;
+		} else {
+			unset( $_SERVER[ Helpers::header_key( $value ) ] );
+		}
+
+		$this->assertSame( $expected, Helpers::header_valid( $value ) );
+	}
 }

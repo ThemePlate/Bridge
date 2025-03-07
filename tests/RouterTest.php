@@ -137,7 +137,7 @@ final class RouterTest extends TestCase {
 		$router->add( $p_id_r, $handler );
 
 		if ( $is_known ) {
-			$_SERVER[ $handler->header_key() ] = true;
+			$_SERVER[ Helpers::header_key( $p_id_r ) ] = true;
 
 			$this->assertTrue( $router->dispatch( $p_id_r, 'POST' ) );
 		} else {

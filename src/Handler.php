@@ -28,33 +28,9 @@ class Handler {
 	}
 
 
-	public function header_key(): string {
-
-		if ( ! $this->identifier ) {
-			return '';
-		}
-
-		return Helpers::header_key( $this->identifier );
-
-	}
-
-
-	public function is_valid(): bool {
-
-		$header = $this->header_key();
-
-		if ( ! $header ) {
-			return true;
-		}
-
-		return isset( $_SERVER[ $header ] ) && $_SERVER[ $header ];
-
-	}
-
-
 	public function execute( string $method, array $params ): bool {
 
-		if ( ! $this->is_valid() ) {
+		if ( ! Helpers::header_valid( $this->identifier ) ) {
 			return false;
 		}
 
