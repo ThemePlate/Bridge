@@ -32,9 +32,9 @@ class Helpers {
 
 	public static function prepare_header( string $value ): string {
 
-		$value = trim( $value );
-		$value = str_replace( '_', ' ', $value );
-		$value = ucwords( strtolower( $value ) );
+		$value = self::prepare_pathname( $value );
+		$value = preg_replace( '/[^\w\d]+/', ' ', $value );
+		$value = ucwords( strtolower( trim( $value ) ) );
 
 		return str_replace( ' ', '-', $value );
 
@@ -42,6 +42,12 @@ class Helpers {
 
 
 	public static function header_key( string $value ): string {
+
+		$value = self::prepare_header( $value );
+
+		if ( '' === $value ) {
+			return '';
+		}
 
 		$header = strtoupper( $value );
 		$header = str_replace( '-', '_', $header );
