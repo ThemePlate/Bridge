@@ -1,0 +1,38 @@
+{
+	"name": "themeplate/bridge",
+	"description": "A connection point for frontend libraries",
+	"license": "GPL-3.0-only",
+	"authors": [
+		{
+			"name": "Gene Alyson Fortunado Torcende",
+			"email": "genealyson.torcende@gmail.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true
+		},
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
+	"require": {
+		"php": "^8.2"
+	},
+	"require-dev": {
+		"themeplate/tester": "^2.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"ThemePlate\\Bridge\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests"
+		}
+	}
+}
