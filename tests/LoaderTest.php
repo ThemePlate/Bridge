@@ -13,7 +13,6 @@ use function Brain\Monkey\Functions\expect;
 final class LoaderTest extends TestCase {
 	public static function for_location(): array {
 		return array(
-			'null'  => array( null, Helpers::DEFAULT_NAMEPATH ),
 			'empty' => array( '', Helpers::DEFAULT_NAMEPATH ),
 			'root'  => array( '/', Helpers::DEFAULT_NAMEPATH ),
 		);
@@ -23,9 +22,7 @@ final class LoaderTest extends TestCase {
 	public function test_location( ?string $location, string $expected ): void {
 		expect( 'path_is_absolute' )->once()->andReturn( false );
 
-		$loader = null === $location ? new Loader() : new Loader( $location );
-
-		$this->assertSame( __DIR__ . DIRECTORY_SEPARATOR . $expected, $loader->location );
+		$this->assertSame( __DIR__ . DIRECTORY_SEPARATOR . $expected, ( new Loader( $location ) )->location );
 	}
 
 	public static function for_is_valid_template(): array {

@@ -13,7 +13,7 @@ class Loader {
 	public readonly string $location;
 
 
-	public function __construct( string $location = Helpers::DEFAULT_NAMEPATH ) {
+	public function __construct( string $location ) {
 
 		if ( ! path_is_absolute( $location ) ) {
 			$location = Helpers::prepare_pathname( $location );
@@ -49,12 +49,7 @@ class Loader {
 			return false;
 		}
 
-		return $this->render( $data['REQUEST_ROUTE'], $data );
-
-	}
-
-
-	public function render( string $template, array $params ): bool {
+		$template = $data['REQUEST_ROUTE'];
 
 		if ( ! $this->is_valid( $template ) ) {
 			return false;
@@ -64,7 +59,7 @@ class Loader {
 			$params = func_get_arg( 0 );
 
 			return (bool) include $this->file_path( func_get_arg( 1 ) );
-		} )( $params, $template );
+		} )( $data, $template );
 
 	}
 

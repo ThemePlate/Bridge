@@ -161,8 +161,6 @@ final class RouterTest extends TestCase {
 			$router->map( $route, $cbf );
 		}
 
-		$_SERVER[ Helpers::header_key( $router->prefix ) ] = true;
-
 		if ( $is_known ) {
 			$this->assertTrue( $router->dispatch( $route, 'OPTION' ) );
 		} else {
@@ -189,8 +187,6 @@ final class RouterTest extends TestCase {
 				);
 			}
 		}
-
-		$_SERVER[ Helpers::header_key( $router->prefix ) ] = true;
 
 		$return = $router->dispatch( $route, $is_known ? $method : 'OPTION' );
 
