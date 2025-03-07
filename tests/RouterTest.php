@@ -8,6 +8,7 @@ use Brain\Monkey;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ThemePlate\Bridge\Handler;
 use ThemePlate\Bridge\Helpers;
+use ThemePlate\Bridge\Loader;
 use ThemePlate\Bridge\Router;
 use PHPUnit\Framework\TestCase;
 use function Brain\Monkey\Functions\expect;
@@ -197,6 +198,37 @@ final class RouterTest extends TestCase {
 			$this->assertTrue( $return );
 		} else {
 			$this->assertFalse( $return );
+		}
+	}
+
+
+	public static function for_load(): array {
+		return array(
+			'call.txt'    => array( 'call', false ),
+			'error.php'   => array( 'error', false ),
+			'hello.php'   => array( 'hello', true ),
+			'goodbye.php' => array( 'goodbye', true ),
+		);
+	}
+
+	#[DataProvider( 'for_load' )]
+	public function test_load( string $route, bool $is_valid ): void {
+		$this->stub_wp_parse_url( 3 );
+		expect( 'path_is_absolute' )->once()->andReturn( true );
+
+		$router = new Router( 'test' );
+
+		$router->load(
+			new Loader( __DIR__ . '/templates' ),
+			new Handler( 'TPBT' )
+		);
+
+		$_SERVER['HTTP_TPBT'] = true;
+
+		if ( $is_valid ) {
+			$this->assertTrue( $router->dispatch( $route, 'GET' ) );
+		} else {
+			$this->assertFalse( $router->dispatch( $route, 'GET' ) );
 		}
 	}
 }

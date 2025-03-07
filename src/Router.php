@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace ThemePlate\Bridge;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use WP;
 
 class Router {
@@ -168,6 +170,34 @@ class Router {
 	public function delete( string $route, callable $callback ): bool {
 
 		return $this->map( $route, $callback, 'DELETE' );
+
+	}
+
+
+	public function load( Loader $loader, Handler $handler ): void {
+
+		$iterator = new RecursiveDirectoryIterator( $loader->location );
+
+		foreach ( new RecursiveIteratorIterator( $iterator ) as $item ) {
+			if ( ! $item->isFile() || $item->getExtension() !== 'php' ) {
+				continue;
+			}
+
+			$path = str_replace(
+				array(
+					$loader->location . DIRECTORY_SEPARATOR,
+					'.php',
+				),
+				'',
+				$item->getPathname()
+			);
+
+			foreach ( Helpers::HTTP_METHODS as $method ) {
+				$handler->handle( $method, array( $loader, 'load' ) );
+			}
+
+			$this->add( $path, $handler );
+		}
 
 	}
 
