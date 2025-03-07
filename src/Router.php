@@ -16,7 +16,7 @@ class Router {
 	protected array $routes = array();
 
 
-	public function __construct( string $prefix = Helpers::DEFAULT_NAMEPATH ) {
+	public function __construct( string $prefix ) {
 
 		$prefix = Helpers::prepare_pathname( $prefix );
 

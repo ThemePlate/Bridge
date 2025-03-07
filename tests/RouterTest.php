@@ -25,17 +25,14 @@ final class RouterTest extends TestCase {
 
 	public static function for_prefix(): array {
 		return array(
-			'null'  => array( null, Helpers::DEFAULT_NAMEPATH ),
 			'empty' => array( '', Helpers::DEFAULT_NAMEPATH ),
 			'root'  => array( '/', Helpers::DEFAULT_NAMEPATH ),
 		);
 	}
 
 	#[DataProvider( 'for_prefix' )]
-	public function test_prefix( ?string $prefix, string $expected ): void {
-		$router = null === $prefix ? new Router() : new Router( $prefix );
-
-		$this->assertSame( $expected, $router->prefix );
+	public function test_prefix( string $prefix, string $expected ): void {
+		$this->assertSame( $expected, ( new Router( $prefix ) )->prefix );
 	}
 
 	protected function stub_wp_parse_url( int $count = 1 ): void {
@@ -150,7 +147,7 @@ final class RouterTest extends TestCase {
 	#[DataProvider( 'for_init' )]
 	public function test_basic_routes( bool $is_known ): void {
 		$route  = 'tester';
-		$router = new Router();
+		$router = new Router( 'test' );
 
 		if ( $is_known ) {
 			$this->stub_wp_parse_url( count( Helpers::HTTP_METHODS ) );
