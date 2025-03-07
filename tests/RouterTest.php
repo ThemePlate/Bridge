@@ -145,6 +145,33 @@ final class RouterTest extends TestCase {
 	}
 
 	#[DataProvider( 'for_init' )]
+	public function test_map( bool $is_known ): void {
+		$this->stub_wp_parse_url();
+
+		$route  = 'tester';
+		$router = new Router( 'test' );
+		$cbf    = function (): true {
+			return true;
+		};
+
+		if ( $is_known ) {
+			$router->map( $route, $cbf, 'OPTION' );
+		} else {
+			$router->map( $route, $cbf );
+		}
+
+		$_SERVER[ Helpers::header_key( $router->prefix ) ] = true;
+
+		if ( $is_known ) {
+			$this->assertTrue( $router->dispatch( $route, 'OPTION' ) );
+		} else {
+			foreach ( Helpers::HTTP_METHODS as $method ) {
+				$this->assertTrue( $router->dispatch( $route, $method ) );
+			}
+		}
+	}
+
+	#[DataProvider( 'for_init' )]
 	public function test_basic_routes( bool $is_known ): void {
 		$route  = 'tester';
 		$router = new Router( 'test' );

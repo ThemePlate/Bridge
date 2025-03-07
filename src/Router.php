@@ -112,7 +112,7 @@ class Router {
 	}
 
 
-	public function map( string $route, callable $callback, string $method = null ): bool {
+	public function map( string $route, callable $callback, ?string $method = null ): bool {
 
 		$route = Helpers::prepare_pathname( $route );
 
@@ -126,7 +126,11 @@ class Router {
 
 		$handler = $this->routes[ $route ];
 
-		$handler->handle( $method, $callback );
+		$methods = $method ? array( $method ) : Helpers::HTTP_METHODS;
+
+		foreach ( $methods as $method ) {
+			$handler->handle( $method, $callback );
+		}
 
 		return true;
 
