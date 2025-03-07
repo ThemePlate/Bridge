@@ -54,11 +54,16 @@ class Handler {
 
 	public function execute( string $method, array $params ): bool {
 
-		if (
-			! $this->is_valid() ||
-			empty( $this->handles[ $method ] )
-		) {
+		if ( ! $this->is_valid() ) {
 			return false;
+		}
+
+		if ( empty( $this->handles[ $method ] ) ) {
+			if ( empty( $this->handles['*'] ) ) {
+				return false;
+			}
+
+			$method = '*';
 		}
 
 		return call_user_func_array( $this->handles[ $method ], array( $params ) );

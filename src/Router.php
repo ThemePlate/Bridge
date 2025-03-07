@@ -174,6 +174,13 @@ class Router {
 	}
 
 
+	public function any( string $route, callable $callback ): bool {
+
+		return $this->map( $route, $callback, '*' );
+
+	}
+
+
 	public function load( Loader $loader, Handler $handler ): void {
 
 		$iterator = new RecursiveDirectoryIterator( $loader->location );
@@ -192,9 +199,7 @@ class Router {
 				$item->getPathname()
 			);
 
-			foreach ( Helpers::HTTP_METHODS as $method ) {
-				$handler->handle( $method, array( $loader, 'load' ) );
-			}
+			$handler->handle( '*', array( $loader, 'load' ) );
 
 			$this->add( $path, $handler );
 		}

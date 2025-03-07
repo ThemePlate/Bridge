@@ -75,4 +75,20 @@ final class HandlerTest extends TestCase {
 			}
 		}
 	}
+
+	public function test_handle_wildcard(): void {
+		$handler  = new Handler( 'test' );
+		$callback = function (): true {
+			return true;
+		};
+
+		$handler->handle( '*', $callback );
+		$handler->handle( 'GET', $callback );
+
+		$_SERVER[ $handler->header_key() ] = true;
+
+		$this->assertTrue( $handler->execute( 'GET', array() ) );
+		$this->assertTrue( $handler->execute( 'OPTIONS', array() ) );
+		$this->assertTrue( $handler->execute( 'RANDOM', array() ) );
+	}
 }
