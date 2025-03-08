@@ -10,6 +10,7 @@ use ThemePlate\Bridge\Handler;
 use ThemePlate\Bridge\Helpers;
 use ThemePlate\Bridge\Loader;
 use ThemePlate\Bridge\Router;
+use ThemePlate\Bridge\Validator;
 use PHPUnit\Framework\TestCase;
 use function Brain\Monkey\setUp;
 use function Brain\Monkey\tearDown;
@@ -144,8 +145,6 @@ final class RouterTest extends TestCase {
 		$router->add( $p_id_r, $handler );
 
 		if ( $is_known ) {
-			$_SERVER[ Helpers::header_key( $p_id_r ) ] = true;
-
 			$this->assertTrue( $router->dispatch( $p_id_r, 'POST' ) );
 		} else {
 			$this->assertFalse( $router->dispatch( $p_id_r, 'GET' ) );
@@ -158,6 +157,29 @@ final class RouterTest extends TestCase {
 		$this->assertFalse( $router->dispatch( ' ', '' ) );
 		$this->assertFalse( $router->dispatch( '', ' ' ) );
 		$this->assertFalse( $router->dispatch( ' ', ' ' ) );
+	}
+
+	public function test_validator(): void {
+		$this->stub_wp_parse_url( 2 );
+
+		$validator = new class() implements Validator {
+			public function __invoke( string $route, string $method ): bool {
+				return match ( $route ) {
+					'test' => 'GET' === $method,
+					default => false,
+				};
+			}
+		};
+
+		$router = new Router( 'test', $validator );
+
+		$router->any( 'test', fn(): true => true );
+		$router->any( 'unknown', fn(): true => true );
+
+		$this->assertTrue( $router->dispatch( 'test', 'GET' ) );
+		$this->assertFalse( $router->dispatch( 'test', 'POST' ) );
+		$this->assertFalse( $router->dispatch( 'test', 'DELETE' ) );
+		$this->assertFalse( $router->dispatch( 'unknown', 'GET' ) );
 	}
 
 	#[DataProvider( 'for_init' )]

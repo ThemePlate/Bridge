@@ -16,13 +16,15 @@ class Router {
 
 	public readonly string $prefix;
 
+	public readonly ?Validator $validator;
+
 	/**
 	 * @var array<string, Handler>
 	 */
 	protected array $routes = [];
 
 
-	public function __construct( string $prefix ) {
+	public function __construct( string $prefix, ?Validator $validator = null ) {
 
 		$prefix = Helpers::prepare_pathname( $prefix );
 
@@ -30,7 +32,8 @@ class Router {
 			$prefix = Helpers::DEFAULT_NAMEPATH;
 		}
 
-		$this->prefix = $prefix;
+		$this->prefix    = $prefix;
+		$this->validator = $validator;
 
 	}
 
@@ -86,10 +89,7 @@ class Router {
 
 	public function route( WP $wp ): void {
 
-		if (
-			isset( $wp->query_vars[ $this->prefix ] ) &&
-			Helpers::valid_nonce( $this->prefix )
-		) {
+		if ( isset( $wp->query_vars[ $this->prefix ] ) ) {
 			$route  = Helpers::prepare_pathname( $wp->query_vars[ $this->prefix ] );
 			$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
@@ -128,6 +128,12 @@ class Router {
 		$method = strtoupper( trim( $method ) );
 
 		if ( '' === $route || '' === $method ) {
+			return false;
+		}
+
+		$validator = $this->validator;
+
+		if ( $validator instanceof Validator && ! $validator( $route, $method ) ) {
 			return false;
 		}
 
