@@ -11,7 +11,8 @@ namespace ThemePlate\Bridge;
 class Handler {
 
 	public readonly string $identifier;
-	protected array $handles = array();
+
+	protected array $handles = [];
 
 
 	public function __construct( string $identifier ) {
@@ -42,7 +43,7 @@ class Handler {
 			$method = '*';
 		}
 
-		return call_user_func_array( $this->handles[ $method ], array( $params ) );
+		return call_user_func_array( $this->handles[ $method ], [ $params ] );
 
 	}
 

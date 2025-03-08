@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 final class HandlerTest extends TestCase {
 	public function test_execute_registered_method(): void {
 		$method  = 'name';
-		$params  = array( 1, 'two' );
+		$params  = [ 1, 'two' ];
 		$handler = new Handler( 'test' );
 
 		$handler->handle(
@@ -30,23 +30,23 @@ final class HandlerTest extends TestCase {
 	}
 
 	public function test_execute_returns_false_if_method_not_registered(): void {
-		$this->assertFalse( ( new Handler( 'identifier' ) )->execute( 'method', array() ) );
+		$this->assertFalse( ( new Handler( 'identifier' ) )->execute( 'method', [] ) );
 	}
 
 	public function test_execute_return_on_empty_identifier(): void {
 		$handler = new Handler( '' );
 
 		$handler->handle( 'OPTION', fn(): true => true );
-		$this->assertTrue( $handler->execute( 'OPTION', array() ) );
+		$this->assertTrue( $handler->execute( 'OPTION', [] ) );
 		$this->assertArrayNotHasKey( Helpers::header_key( $handler->identifier ), $_SERVER );
 		$this->assertNotEmpty( $_SERVER );
 	}
 
 	public function test_handle_multiple_methods(): void {
-		$handles = array(
-			'method1' => array( true, array( false, null ) ),
-			'method2' => array( false, array( new stdClass() ) ),
-		);
+		$handles = [
+			'method1' => [ true, [ false, null ] ],
+			'method2' => [ false, [ new stdClass() ] ],
+		];
 		$handler = new Handler( 'Custom-Request' );
 
 		foreach ( $handles as $method => $data ) {
@@ -80,8 +80,8 @@ final class HandlerTest extends TestCase {
 
 		$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
 
-		$this->assertTrue( $handler->execute( 'GET', array() ) );
-		$this->assertTrue( $handler->execute( 'OPTIONS', array() ) );
-		$this->assertTrue( $handler->execute( 'RANDOM', array() ) );
+		$this->assertTrue( $handler->execute( 'GET', [] ) );
+		$this->assertTrue( $handler->execute( 'OPTIONS', [] ) );
+		$this->assertTrue( $handler->execute( 'RANDOM', [] ) );
 	}
 }

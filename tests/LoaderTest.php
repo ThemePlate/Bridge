@@ -12,10 +12,10 @@ use function Brain\Monkey\Functions\expect;
 
 final class LoaderTest extends TestCase {
 	public static function for_location(): array {
-		return array(
-			'empty' => array( '', Helpers::DEFAULT_NAMEPATH ),
-			'root'  => array( '/', Helpers::DEFAULT_NAMEPATH ),
-		);
+		return [
+			'empty' => [ '', Helpers::DEFAULT_NAMEPATH ],
+			'root'  => [ '/', Helpers::DEFAULT_NAMEPATH ],
+		];
 	}
 
 	#[DataProvider( 'for_location' )]
@@ -26,13 +26,13 @@ final class LoaderTest extends TestCase {
 	}
 
 	public static function for_is_valid_template(): array {
-		return array(
-			array( 'HelpersTest', true ),
-			array( 'RouterTest', true ),
-			array( 'nonexistent', false ),
-			array( '', false ),
-			array( ' ', false ),
-		);
+		return [
+			[ 'HelpersTest', true ],
+			[ 'RouterTest', true ],
+			[ 'nonexistent', false ],
+			[ '', false ],
+			[ ' ', false ],
+		];
 	}
 
 	#[DataProvider( 'for_is_valid_template' )]

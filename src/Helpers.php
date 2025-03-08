@@ -12,13 +12,13 @@ class Helpers {
 
 	public const DEFAULT_NAMEPATH = 'bridge';
 
-	public const HTTP_METHODS = array(
+	public const HTTP_METHODS = [
 		'GET',
 		'POST',
 		'PUT',
 		'PATCH',
 		'DELETE',
-	);
+	];
 
 
 	public static function prepare_pathname( string $value ): string {
@@ -108,7 +108,7 @@ class Helpers {
 			return null;
 		}
 
-		$params = array();
+		$params = [];
 		$count  = count( $pattern_parts );
 
 		for ( $i = 0; $i < $count; $i++ ) {

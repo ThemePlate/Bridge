@@ -15,7 +15,8 @@ use WP;
 class Router {
 
 	public readonly string $prefix;
-	protected array $routes = array();
+
+	protected array $routes = [];
 
 
 	public function __construct( string $prefix ) {
@@ -122,18 +123,18 @@ class Router {
 			return false;
 		}
 
-		$base_params = array(
+		$base_params = [
 			'REQUEST_METHOD' => $method,
 			'REQUEST_ROUTE'  => $route,
 			...$_REQUEST, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		);
+		];
 
 		$handler = $this->routes[ $route ] ?? null;
 
 		if ( null !== $handler ) {
 			return call_user_func_array(
-				array( $handler, 'execute' ),
-				array( $method, $base_params )
+				[ $handler, 'execute' ],
+				[ $method, $base_params ]
 			);
 		}
 
@@ -144,8 +145,8 @@ class Router {
 				$params = array_merge( $base_params, $dynamic_params );
 
 				return call_user_func_array(
-					array( $handler, 'execute' ),
-					array( $method, $params )
+					[ $handler, 'execute' ],
+					[ $method, $params ]
 				);
 			}
 		}
@@ -176,7 +177,7 @@ class Router {
 		}
 
 		$handler = $this->routes[ $route ];
-		$methods = $method ? array( $method ) : Helpers::HTTP_METHODS;
+		$methods = $method ? [ $method ] : Helpers::HTTP_METHODS;
 
 		foreach ( $methods as $method ) {
 			$handler->handle( $method, $callback );
@@ -243,10 +244,10 @@ class Router {
 			}
 
 			$path = str_replace(
-				array(
+				[
 					$loader->location . DIRECTORY_SEPARATOR,
 					$loader->extension,
-				),
+				],
 				'',
 				$item->getPathname()
 			);

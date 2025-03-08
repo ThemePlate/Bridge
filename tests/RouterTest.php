@@ -27,10 +27,10 @@ final class RouterTest extends TestCase {
 	}
 
 	public static function for_prefix(): array {
-		return array(
-			'empty' => array( '', Helpers::DEFAULT_NAMEPATH ),
-			'root'  => array( '/', Helpers::DEFAULT_NAMEPATH ),
-		);
+		return [
+			'empty' => [ '', Helpers::DEFAULT_NAMEPATH ],
+			'root'  => [ '/', Helpers::DEFAULT_NAMEPATH ],
+		];
 	}
 
 	#[DataProvider( 'for_prefix' )]
@@ -47,10 +47,10 @@ final class RouterTest extends TestCase {
 	public static function for_init(): array {
 		defined( 'EP_ROOT' ) || define( 'EP_ROOT', 64 );
 
-		return array(
-			'known'   => array( true ),
-			'unknown' => array( false ),
-		);
+		return [
+			'known'   => [ true ],
+			'unknown' => [ false ],
+		];
 	}
 
 	#[DataProvider( 'for_init' )]
@@ -69,27 +69,27 @@ final class RouterTest extends TestCase {
 
 	public static function for_is_valid(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'base' => array( 'test', true ),
-			'sub' => array( 'test/this', true ),
-			'slashed' => array( '/test/this/', true ),
-			'extras' => array( '//test//this', false ),
-			'deep' => array( '/test/this/please// ', true ),
-			'unknown' => array( 'tester', false ),
-			'empty' => array( '', false ),
-			'root' => array( '/', false ),
-			'dynamic' => array( 'test/[this]', true ),
-			'dynamic empty' => array( 'test/[]', false ),
-			'dynamic deep' => array( 'test/[this]/[that]', true ),
-			'dynamic deep empty' => array( 'test/[this]/[]', false ),
-			'no closing bracket' => array( 'test/[this', false ),
-			'no opening bracket' => array( 'test/this]', false ),
-			'multiple opening' => array( 'test/[[this]', false ),
-			'multiple closing' => array( 'test/[that]]', false ),
-			'improper opening' => array( 'test/[this[that]', false ),
-			'improper closing' => array( 'test/[this]that]', false ),
-			'wrong brackets' => array( 'test/]this/[that', false ),
-		);
+		return [
+			'base' => [ 'test', true ],
+			'sub' => [ 'test/this', true ],
+			'slashed' => [ '/test/this/', true ],
+			'extras' => [ '//test//this', false ],
+			'deep' => [ '/test/this/please// ', true ],
+			'unknown' => [ 'tester', false ],
+			'empty' => [ '', false ],
+			'root' => [ '/', false ],
+			'dynamic' => [ 'test/[this]', true ],
+			'dynamic empty' => [ 'test/[]', false ],
+			'dynamic deep' => [ 'test/[this]/[that]', true ],
+			'dynamic deep empty' => [ 'test/[this]/[]', false ],
+			'no closing bracket' => [ 'test/[this', false ],
+			'no opening bracket' => [ 'test/this]', false ],
+			'multiple opening' => [ 'test/[[this]', false ],
+			'multiple closing' => [ 'test/[that]]', false ],
+			'improper opening' => [ 'test/[this[that]', false ],
+			'improper closing' => [ 'test/[this]that]', false ],
+			'wrong brackets' => [ 'test/]this/[that', false ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -140,6 +140,7 @@ final class RouterTest extends TestCase {
 		$handler = new Handler( $p_id_r );
 
 		$handler->handle( 'POST', fn(): true => true );
+
 		$router->add( $p_id_r, $handler );
 
 		if ( $is_known ) {
@@ -226,18 +227,18 @@ final class RouterTest extends TestCase {
 			)
 		);
 
-		$data = array(
-			'call.txt'    => array( 'call', false ),
-			'error.php'   => array( 'error', false ),
-			'hello.php'   => array( 'hello', true ),
-			'goodbye.php' => array( 'goodbye', true ),
-			'deep/fn.php' => array( 'deep/fn', true ),
-		);
+		$data = [
+			'call.txt'    => [ 'call', false ],
+			'error.php'   => [ 'error', false ],
+			'hello.php'   => [ 'hello', true ],
+			'goodbye.php' => [ 'goodbye', true ],
+			'deep/fn.php' => [ 'deep/fn', true ],
+		];
 
 		$_SERVER['HTTP_TPBT'] = true;
 
 		foreach ( $data as $expected ) {
-			list( $route, $is_valid ) = $expected;
+			[$route, $is_valid] = $expected;
 
 			if ( $is_valid ) {
 				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
@@ -248,10 +249,10 @@ final class RouterTest extends TestCase {
 	}
 
 	public static function for_load_invalid(): array {
-		return array(
-			'nonexistent' => array( '../nonexistent' ),
-			'call.txt'    => array( 'templates/call.txt' ),
-		);
+		return [
+			'nonexistent' => [ '../nonexistent' ],
+			'call.txt'    => [ 'templates/call.txt' ],
+		];
 	}
 
 	#[DataProvider( 'for_load_invalid' )]
@@ -281,21 +282,21 @@ final class RouterTest extends TestCase {
 			)
 		);
 
-		$data = array(
-			'call.txt'             => array( 'call', false ),
-			'error.php'            => array( 'error', false ),
-			'hello.php'            => array( 'hello', false ),
-			'goodbye.php'          => array( 'goodbye', false ),
-			'deep/fn.php'          => array( 'deep/fn', false ),
-			'deep/only.action.php' => array( 'deep/only', true ),
-			'do.action.php'        => array( 'do', true ),
-			'test.action.php'      => array( 'test', true ),
-		);
+		$data = [
+			'call.txt'             => [ 'call', false ],
+			'error.php'            => [ 'error', false ],
+			'hello.php'            => [ 'hello', false ],
+			'goodbye.php'          => [ 'goodbye', false ],
+			'deep/fn.php'          => [ 'deep/fn', false ],
+			'deep/only.action.php' => [ 'deep/only', true ],
+			'do.action.php'        => [ 'do', true ],
+			'test.action.php'      => [ 'test', true ],
+		];
 
 		$_SERVER['HTTP_TPBT'] = true;
 
 		foreach ( $data as $expected ) {
-			list( $route, $is_valid ) = $expected;
+			[$route, $is_valid] = $expected;
 
 			if ( $is_valid ) {
 				$this->assertTrue( $router->dispatch( $route, 'GET' ) );

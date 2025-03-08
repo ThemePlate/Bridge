@@ -11,6 +11,7 @@ namespace ThemePlate\Bridge;
 class Loader {
 
 	public readonly string $location;
+
 	public readonly string $extension;
 
 

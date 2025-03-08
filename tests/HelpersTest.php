@@ -11,16 +11,16 @@ use PHPUnit\Framework\TestCase;
 final class HelpersTest extends TestCase {
 	public static function for_prepare_pathname(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'correct' => array( 'test', 'test' ),
-			'prefixed' => array( '/test', 'test' ),
-			'suffixed' => array( 'test/', 'test' ),
-			'windows' => array( 'C:\folder\test', 'C:/folder/test' ),
-			'extras' => array( '/test// ', 'test' ),
-			'deep'  => array( ' //deep/test', 'deep/test' ),
-			'empty' => array( '', '' ),
-			'root'  => array( '/', '' ),
-		);
+		return [
+			'correct' => [ 'test', 'test' ],
+			'prefixed' => [ '/test', 'test' ],
+			'suffixed' => [ 'test/', 'test' ],
+			'windows' => [ 'C:\folder\test', 'C:/folder/test' ],
+			'extras' => [ '/test// ', 'test' ],
+			'deep'  => [ ' //deep/test', 'deep/test' ],
+			'empty' => [ '', '' ],
+			'root'  => [ '/', '' ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -31,18 +31,18 @@ final class HelpersTest extends TestCase {
 
 	public static function for_prepare_header(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'correct' => array( 'test', 'Test' ),
-			'prefixed' => array( '/test', 'Test' ),
-			'suffixed' => array( 'test/', 'Test' ),
-			'windows' => array( 'C:\folder\test', 'C-Folder-Test' ),
-			'extras' => array( '/test// ', 'Test' ),
-			'deep'  => array( ' //deep/test', 'Deep-Test' ),
-			'empty' => array( '', '' ),
-			'root'  => array( '/', '' ),
-			'spaced' => array( ' test this', 'Test-This' ),
-			'others' => array( '~test!@this#$%out^&*+', 'Test-This-Out' ),
-		);
+		return [
+			'correct' => [ 'test', 'Test' ],
+			'prefixed' => [ '/test', 'Test' ],
+			'suffixed' => [ 'test/', 'Test' ],
+			'windows' => [ 'C:\folder\test', 'C-Folder-Test' ],
+			'extras' => [ '/test// ', 'Test' ],
+			'deep'  => [ ' //deep/test', 'Deep-Test' ],
+			'empty' => [ '', '' ],
+			'root'  => [ '/', '' ],
+			'spaced' => [ ' test this', 'Test-This' ],
+			'others' => [ '~test!@this#$%out^&*+', 'Test-This-Out' ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -53,12 +53,12 @@ final class HelpersTest extends TestCase {
 
 	public static function for_prepare_extension(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'empty' => array( '', '.php' ),
-			'correct' => array( 'action', '.action.php' ),
-			'dashed' => array( 'action-test', '.action-test.php' ),
-			'spaced'  => array( ' action test ', '.action test.php' ),
-		);
+		return [
+			'empty' => [ '', '.php' ],
+			'correct' => [ 'action', '.action.php' ],
+			'dashed' => [ 'action-test', '.action-test.php' ],
+			'spaced'  => [ ' action test ', '.action test.php' ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -69,18 +69,18 @@ final class HelpersTest extends TestCase {
 
 	public static function for_header_key(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'empty' => array( '', '' ),
-			'root'  => array( '/', '' ),
-			'correct' => array( 'test', 'HTTP_TEST' ),
-			'spaced' => array( ' test this', 'HTTP_TEST_THIS' ),
-			'prefixed' => array( '/test', 'HTTP_TEST' ),
-			'suffixed' => array( 'test/', 'HTTP_TEST' ),
-			'windows' => array( 'C:\folder\test', 'HTTP_C_FOLDER_TEST' ),
-			'extras' => array( '/test// ', 'HTTP_TEST' ),
-			'deep'  => array( ' //deep/test', 'HTTP_DEEP_TEST' ),
-			'others' => array( '~test!@this#$%out^&*+', 'HTTP_TEST_THIS_OUT' ),
-		);
+		return [
+			'empty' => [ '', '' ],
+			'root'  => [ '/', '' ],
+			'correct' => [ 'test', 'HTTP_TEST' ],
+			'spaced' => [ ' test this', 'HTTP_TEST_THIS' ],
+			'prefixed' => [ '/test', 'HTTP_TEST' ],
+			'suffixed' => [ 'test/', 'HTTP_TEST' ],
+			'windows' => [ 'C:\folder\test', 'HTTP_C_FOLDER_TEST' ],
+			'extras' => [ '/test// ', 'HTTP_TEST' ],
+			'deep'  => [ ' //deep/test', 'HTTP_DEEP_TEST' ],
+			'others' => [ '~test!@this#$%out^&*+', 'HTTP_TEST_THIS_OUT' ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -91,11 +91,11 @@ final class HelpersTest extends TestCase {
 
 	public static function for_header_valid(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'empty' => array( '', false, true ),
-			'missing' => array( 'TESTS', false, false ),
-			'found' => array( 'TESTS', true, true ),
-		);
+		return [
+			'empty' => [ '', false, true ],
+			'missing' => [ 'TESTS', false, false ],
+			'found' => [ 'TESTS', true, true ],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
@@ -112,44 +112,44 @@ final class HelpersTest extends TestCase {
 
 	public static function for_dynamic_match(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return array(
-			'simple' => array(
+		return [
+			'simple' => [
 				'pattern' => 'user/[name]',
 				'route' => 'user/john',
-				'expected' => array( 'name' => 'john' ),
-			),
-			'multiple' => array(
+				'expected' => [ 'name' => 'john' ],
+			],
+			'multiple' => [
 				'pattern' => 'page/[id]/comment/[user]',
 				'route' => 'page/123/comment/john',
-				'expected' => array(
+				'expected' => [
 					'id' => '123',
 					'user' => 'john',
-				),
-			),
-			'prefixed' => array(
+				],
+			],
+			'prefixed' => [
 				'pattern' => 'site-[number]',
 				'route' => 'site-123',
-				'expected' => array( 'number' => '123' ),
-			),
-			'combined' => array(
+				'expected' => [ 'number' => '123' ],
+			],
+			'combined' => [
 				'pattern' => 'site-[number]/reviews/[id]-live',
 				'route' => 'site-123/reviews/2-live',
-				'expected' => array(
+				'expected' => [
 					'number' => '123',
 					'id' => '2',
-				),
-			),
-			'no_match' => array(
+				],
+			],
+			'no_match' => [
 				'pattern' => 'user/[name]',
 				'route' => 'user/john/extra',
 				'expected' => null,
-			),
-			'mismatch' => array(
+			],
+			'mismatch' => [
 				'pattern' => 'page/[id]/comment/[user]',
 				'route' => 'page/123/comment',
 				'expected' => null,
-			),
-		);
+			],
+		];
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
 
