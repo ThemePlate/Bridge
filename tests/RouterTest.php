@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Brain\Monkey;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use ThemePlate\Bridge\Handler;
@@ -12,16 +11,18 @@ use ThemePlate\Bridge\Helpers;
 use ThemePlate\Bridge\Loader;
 use ThemePlate\Bridge\Router;
 use PHPUnit\Framework\TestCase;
+use function Brain\Monkey\setUp;
+use function Brain\Monkey\tearDown;
 use function Brain\Monkey\Functions\expect;
 
 final class RouterTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
-		Monkey\setUp();
+		setUp();
 	}
 
 	protected function tearDown(): void {
-		Monkey\tearDown();
+		tearDown();
 		parent::tearDown();
 	}
 

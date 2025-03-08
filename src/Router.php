@@ -66,11 +66,7 @@ class Router {
 					return false;
 				}
 
-				if ( $open_count && ! preg_match( '/^[^\[\]]*\[[^\[\]]+\][^\[\]]*$/', $part ) ) {
-					return false;
-				}
-
-				return true;
+				return ! ( $open_count && ! preg_match( '/^[^\[\]]*\[[^\[\]]+\][^\[\]]*$/', $part ) );
 			}
 		);
 
