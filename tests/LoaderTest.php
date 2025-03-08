@@ -19,7 +19,7 @@ final class LoaderTest extends TestCase {
 	}
 
 	#[DataProvider( 'for_location' )]
-	public function test_location( ?string $location, string $expected ): void {
+	public function test_location( string $location, string $expected ): void {
 		expect( 'path_is_absolute' )->once()->andReturn( false );
 
 		$this->assertSame( __DIR__ . DIRECTORY_SEPARATOR . $expected, ( new Loader( $location ) )->location );

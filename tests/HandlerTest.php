@@ -12,7 +12,10 @@ use PHPUnit\Framework\TestCase;
 final class HandlerTest extends TestCase {
 	public function test_execute_registered_method(): void {
 		$method  = 'name';
-		$params  = [ 1, 'two' ];
+		$params  = [
+			'first'  => '1',
+			'second' => 'two',
+		];
 		$handler = new Handler( 'test' );
 
 		$handler->handle(
@@ -44,8 +47,14 @@ final class HandlerTest extends TestCase {
 
 	public function test_handle_multiple_methods(): void {
 		$handles = [
-			'method1' => [ true, [ false, null ] ],
-			'method2' => [ false, [ new stdClass() ] ],
+			'method1' => [
+				true,
+				[
+					'first'  => 'false',
+					'second' => '',
+				],
+			],
+			'method2' => [ false, [ 'first' => stdClass::class ] ],
 		];
 		$handler = new Handler( 'Custom-Request' );
 

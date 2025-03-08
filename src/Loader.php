@@ -60,6 +60,7 @@ class Loader {
 			return false;
 		}
 
+		// @phpstan-ignore arguments.count
 		return ( function (): bool {
 			$params = func_get_arg( 0 );
 

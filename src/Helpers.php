@@ -87,6 +87,7 @@ class Helpers {
 
 		$traced = debug_backtrace(); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 
+		// @phpstan-ignore-next-line
 		return dirname( $traced[1]['file'] ) . DIRECTORY_SEPARATOR;
 
 	}
