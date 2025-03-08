@@ -93,4 +93,39 @@ final class HelpersTest extends TestCase {
 
 		$this->assertSame( $expected, Helpers::header_valid( $value ) );
 	}
+
+	public static function for_dynamic_match(): array {
+		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+		return array(
+			'simple' => array(
+				'pattern' => 'user/[name]',
+				'route' => 'user/john',
+				'expected' => array( 'name' => 'john' ),
+			),
+			'multiple' => array(
+				'pattern' => 'page/[id]/comment/[user]',
+				'route' => 'page/123/comment/john',
+				'expected' => array(
+					'id' => '123',
+					'user' => 'john',
+				),
+			),
+			'no_match' => array(
+				'pattern' => 'user/[name]',
+				'route' => 'user/john/extra',
+				'expected' => null,
+			),
+			'mismatch' => array(
+				'pattern' => 'page/[id]/comment/[user]',
+				'route' => 'page/123/comment',
+				'expected' => null,
+			),
+		);
+		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+	}
+
+	#[DataProvider( 'for_dynamic_match' )]
+	public function test_dynamic_match( string $pattern, string $route, ?array $expected ): void {
+		$this->assertSame( $expected, Helpers::dynamic_match( $pattern, $route ) );
+	}
 }

@@ -6,6 +6,7 @@ namespace Tests;
 
 use Brain\Monkey;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use ThemePlate\Bridge\Handler;
 use ThemePlate\Bridge\Helpers;
 use ThemePlate\Bridge\Loader;
@@ -78,6 +79,10 @@ final class RouterTest extends TestCase {
 			'unknown' => array( 'tester', false ),
 			'empty' => array( '', false ),
 			'root' => array( '/', false ),
+			'dynamic' => array( 'test/[this]', true ),
+			'dynamic empty' => array( 'test/[]', false ),
+			'dynamic deep' => array( 'test/[this]/[that]', true ),
+			'dynamic deep empty' => array( 'test/[this]/[]', false ),
 		);
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}
@@ -225,6 +230,37 @@ final class RouterTest extends TestCase {
 			$this->assertTrue( $router->dispatch( $route, 'GET' ) );
 		} else {
 			$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+		}
+	}
+
+	#[DataProviderExternal( HelpersTest::class, 'for_dynamic_match' )]
+	public function test_dynamic_routes( string $pattern, string $route, ?array $expected ): void {
+		$this->stub_wp_parse_url();
+
+		$router   = new Router( 'test' );
+		$captured = null;
+		$handler  = $this->createMock( Handler::class );
+
+		$handler->method( 'execute' )
+			->willReturnCallback(
+				function ( $method, $params ) use ( &$captured ) {
+					$captured = $params;
+					return true;
+				}
+			);
+
+		$router->add( $pattern, $handler );
+
+		$result = $router->dispatch( $route, 'GET' );
+
+		if ( null === $expected ) {
+			$this->assertFalse( $result );
+		} else {
+			$this->assertTrue( $result );
+
+			foreach ( $expected as $key => $value ) {
+				$this->assertSame( $value, $captured[ $key ] );
+			}
 		}
 	}
 }

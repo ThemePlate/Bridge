@@ -85,4 +85,32 @@ class Helpers {
 
 	}
 
+
+	public static function dynamic_match( string $pattern, string $route ): ?array {
+
+		$pattern_parts = explode( '/', $pattern );
+		$route_parts   = explode( '/', $route );
+
+		if ( count( $pattern_parts ) !== count( $route_parts ) ) {
+			return null;
+		}
+
+		$params = array();
+		$count  = count( $pattern_parts );
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$pattern_part = $pattern_parts[ $i ];
+			$route_part   = $route_parts[ $i ];
+
+			if ( preg_match( '/\[([^\]]+)\]/', $pattern_part, $matches ) ) {
+				$params[ $matches[1] ] = $route_part;
+			} elseif ( $pattern_part !== $route_part ) {
+				return null;
+			}
+		}
+
+		return $params;
+
+	}
+
 }

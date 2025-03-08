@@ -52,7 +52,14 @@ class Router {
 			return false;
 		}
 
-		return count( $parts ) === count( array_filter( $parts ) );
+		$valid_parts = array_filter(
+			$parts,
+			function ( $part ) {
+				return '' !== $part && '[]' !== $part && ! preg_match( '/\[\]/', $part );
+			}
+		);
+
+		return count( $parts ) === count( $valid_parts );
 
 	}
 
@@ -96,20 +103,35 @@ class Router {
 
 	public function dispatch( string $route, string $method ): bool {
 
-		if ( empty( $this->routes[ $route ] ) ) {
-			return false;
-		}
-
-		$params = array(
+		$base_params = array(
 			'REQUEST_METHOD' => $method,
 			'REQUEST_ROUTE'  => $route,
 			...$_REQUEST, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		);
 
-		return call_user_func_array(
-			array( $this->routes[ $route ], 'execute' ),
-			array( $method, $params )
-		);
+		$handler = $this->routes[ $route ] ?? null;
+
+		if ( null !== $handler ) {
+			return call_user_func_array(
+				array( $handler, 'execute' ),
+				array( $method, $base_params )
+			);
+		}
+
+		foreach ( $this->routes as $pattern => $handler ) {
+			$dynamic_params = Helpers::dynamic_match( $pattern, $route );
+
+			if ( null !== $dynamic_params ) {
+				$params = array_merge( $base_params, $dynamic_params );
+
+				return call_user_func_array(
+					array( $handler, 'execute' ),
+					array( $method, $params )
+				);
+			}
+		}
+
+		return false;
 
 	}
 
