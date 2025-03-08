@@ -16,6 +16,9 @@ class Router {
 
 	public readonly string $prefix;
 
+	/**
+	 * @var array<string, Handler>
+	 */
 	protected array $routes = [];
 
 

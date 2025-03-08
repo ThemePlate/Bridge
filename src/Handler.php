@@ -12,6 +12,9 @@ class Handler {
 
 	public readonly string $identifier;
 
+	/**
+	 * @var array<string, callable>
+	 */
 	protected array $handles = [];
 
 
@@ -28,7 +31,9 @@ class Handler {
 
 	}
 
-
+	/**
+	 * @param array<string, string> $params
+	 */
 	public function execute( string $method, array $params ): bool {
 
 		if ( ! Helpers::header_valid( $this->identifier ) ) {

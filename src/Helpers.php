@@ -98,7 +98,9 @@ class Helpers {
 
 	}
 
-
+	/**
+	 * @return array<string, string> | null
+	 */
 	public static function dynamic_match( string $pattern, string $route ): ?array {
 
 		$pattern_parts = explode( '/', $pattern );

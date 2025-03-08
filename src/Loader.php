@@ -45,7 +45,9 @@ class Loader {
 
 	}
 
-
+	/**
+	 * @param array<string, string> $data
+	 */
 	public function load( array $data ): bool {
 
 		if ( empty( $data['REQUEST_ROUTE'] ) ) {
