@@ -34,7 +34,7 @@ class Helpers {
 
 		$value = self::prepare_pathname( $value );
 		$value = preg_replace( '/[^\w\d]+/', ' ', $value );
-		$value = ucwords( strtolower( trim( $value ) ) );
+		$value = ucwords( strtolower( trim( (string) $value ) ) );
 
 		return str_replace( ' ', '-', $value );
 
@@ -45,7 +45,7 @@ class Helpers {
 
 		$value = trim( $value, '. ' );
 
-		if ( $value ) {
+		if ( '' !== $value ) {
 			$value .= '.';
 		}
 
@@ -74,7 +74,7 @@ class Helpers {
 
 		$header = self::header_key( $value );
 
-		if ( ! $header ) {
+		if ( '' === $header ) {
 			return true;
 		}
 

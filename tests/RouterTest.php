@@ -39,7 +39,7 @@ final class RouterTest extends TestCase {
 
 	protected function stub_wp_parse_url( int $count = 1 ): void {
 		expect( 'wp_parse_url' )->times( $count )->andReturnUsing(
-			function ( ...$args ) {
+			function ( ...$args ): mixed {
 				return call_user_func_array( 'parse_url', $args );
 			}
 		);
@@ -328,7 +328,7 @@ final class RouterTest extends TestCase {
 
 		$handler->method( 'execute' )
 			->willReturnCallback(
-				function ( $method, $params ) use ( &$captured ) {
+				function ( $method, $params ) use ( &$captured ): true {
 					$captured = $params;
 					return true;
 				}

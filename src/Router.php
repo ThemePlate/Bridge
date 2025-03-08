@@ -54,7 +54,7 @@ class Router {
 
 		$valid_parts = array_filter(
 			$parts,
-			function ( $part ) {
+			function ( $part ): bool {
 				if ( '' === $part || '[]' === $part ) {
 					return false;
 				}
@@ -242,7 +242,7 @@ class Router {
 		$iterator = new RecursiveDirectoryIterator( $loader->location );
 
 		foreach ( new RecursiveIteratorIterator( $iterator ) as $item ) {
-			if ( ! $item->isFile() || ! str_ends_with( $item->getFilename(), $loader->extension ) ) {
+			if ( ! $item->isFile() || ! str_ends_with( (string) $item->getFilename(), $loader->extension ) ) {
 				continue;
 			}
 

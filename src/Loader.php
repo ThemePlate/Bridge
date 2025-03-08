@@ -57,7 +57,7 @@ class Loader {
 			return false;
 		}
 
-		return ( function () {
+		return ( function (): bool {
 			$params = func_get_arg( 0 );
 
 			return (bool) include $this->file_path( func_get_arg( 1 ) );
