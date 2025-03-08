@@ -202,35 +202,59 @@ final class RouterTest extends TestCase {
 		}
 	}
 
-
-	public static function for_load(): array {
-		return array(
-			'call.txt'    => array( 'call', false ),
-			'error.php'   => array( 'error', false ),
-			'hello.php'   => array( 'hello', true ),
-			'goodbye.php' => array( 'goodbye', true ),
-		);
-	}
-
-	#[DataProvider( 'for_load' )]
-	public function test_load( string $route, bool $is_valid ): void {
-		$this->stub_wp_parse_url( 3 );
+	public function test_load(): void {
+		$this->stub_wp_parse_url( 4 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router( 'test' );
 
-		$router->load(
-			new Loader( __DIR__ . '/templates' ),
-			new Handler( 'TPBT' )
+		$this->assertTrue(
+			$router->load(
+				new Loader( __DIR__ . '/templates' ),
+				new Handler( 'TPBT' )
+			)
+		);
+
+		$data = array(
+			'call.txt'    => array( 'call', false ),
+			'error.php'   => array( 'error', false ),
+			'hello.php'   => array( 'hello', true ),
+			'goodbye.php' => array( 'goodbye', true ),
+			'deep/fn.php' => array( 'deep/fn', true ),
 		);
 
 		$_SERVER['HTTP_TPBT'] = true;
 
-		if ( $is_valid ) {
-			$this->assertTrue( $router->dispatch( $route, 'GET' ) );
-		} else {
-			$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+		foreach ( $data as $expected ) {
+			list( $route, $is_valid ) = $expected;
+
+			if ( $is_valid ) {
+				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
+			} else {
+				$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+			}
 		}
+	}
+
+	public static function for_load_invalid(): array {
+		return array(
+			'nonexistent' => array( '../nonexistent' ),
+			'call.txt'    => array( 'templates/call.txt' ),
+		);
+	}
+
+	#[DataProvider( 'for_load_invalid' )]
+	public function test_load_invalid( string $location ): void {
+		expect( 'path_is_absolute' )->once()->andReturn( true );
+
+		$router = new Router( 'test' );
+
+		$this->assertFalse(
+			$router->load(
+				new Loader( $location ),
+				new Handler( 'TPBT' )
+			)
+		);
 	}
 
 	#[DataProviderExternal( HelpersTest::class, 'for_dynamic_match' )]

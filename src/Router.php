@@ -203,7 +203,11 @@ class Router {
 	}
 
 
-	public function load( Loader $loader, Handler $handler ): void {
+	public function load( Loader $loader, Handler $handler ): bool {
+
+		if ( ! is_dir( $loader->location ) || ! is_readable( $loader->location ) ) {
+			return false;
+		}
 
 		$iterator = new RecursiveDirectoryIterator( $loader->location );
 
@@ -221,10 +225,12 @@ class Router {
 				$item->getPathname()
 			);
 
-			$handler->handle( '*', array( $loader, 'load' ) );
-
 			$this->add( $path, $handler );
 		}
+
+		$handler->handle( '*', array( $loader, 'load' ) );
+
+		return true;
 
 	}
 
