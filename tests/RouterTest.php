@@ -83,6 +83,13 @@ final class RouterTest extends TestCase {
 			'dynamic empty' => array( 'test/[]', false ),
 			'dynamic deep' => array( 'test/[this]/[that]', true ),
 			'dynamic deep empty' => array( 'test/[this]/[]', false ),
+			'no closing bracket' => array( 'test/[this', false ),
+			'no opening bracket' => array( 'test/this]', false ),
+			'multiple opening' => array( 'test/[[this]', false ),
+			'multiple closing' => array( 'test/[that]]', false ),
+			'improper opening' => array( 'test/[this[that]', false ),
+			'improper closing' => array( 'test/[this]that]', false ),
+			'wrong brackets' => array( 'test/]this/[that', false ),
 		);
 		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 	}

@@ -55,7 +55,22 @@ class Router {
 		$valid_parts = array_filter(
 			$parts,
 			function ( $part ) {
-				return '' !== $part && '[]' !== $part && ! preg_match( '/\[\]/', $part );
+				if ( '' === $part || '[]' === $part ) {
+					return false;
+				}
+
+				$open_count  = substr_count( $part, '[' );
+				$close_count = substr_count( $part, ']' );
+
+				if ( $open_count !== $close_count ) {
+					return false;
+				}
+
+				if ( $open_count && ! preg_match( '/^[^\[\]]*\[[^\[\]]+\][^\[\]]*$/', $part ) ) {
+					return false;
+				}
+
+				return true;
 			}
 		);
 
