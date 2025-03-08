@@ -220,7 +220,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_load(): void {
-		$this->stub_wp_parse_url( 4 );
+		$this->stub_wp_parse_url( 7 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router( 'test' );
@@ -272,6 +272,43 @@ final class RouterTest extends TestCase {
 				new Handler( 'TPBT' )
 			)
 		);
+	}
+
+	public function test_load_suffixed(): void {
+		$this->stub_wp_parse_url( 3 );
+		expect( 'path_is_absolute' )->once()->andReturn( true );
+
+		$router = new Router( 'test' );
+
+		$this->assertTrue(
+			$router->load(
+				new Loader( __DIR__ . '/templates', 'action' ),
+				new Handler( 'TPBT' )
+			)
+		);
+
+		$data = array(
+			'call.txt'             => array( 'call', false ),
+			'error.php'            => array( 'error', false ),
+			'hello.php'            => array( 'hello', false ),
+			'goodbye.php'          => array( 'goodbye', false ),
+			'deep/fn.php'          => array( 'deep/fn', false ),
+			'deep/only.action.php' => array( 'deep/only', true ),
+			'do.action.php'        => array( 'do', true ),
+			'test.action.php'      => array( 'test', true ),
+		);
+
+		$_SERVER['HTTP_TPBT'] = true;
+
+		foreach ( $data as $expected ) {
+			list( $route, $is_valid ) = $expected;
+
+			if ( $is_valid ) {
+				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
+			} else {
+				$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+			}
+		}
 	}
 
 	#[DataProviderExternal( HelpersTest::class, 'for_dynamic_match' )]

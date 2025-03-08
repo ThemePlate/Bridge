@@ -227,14 +227,14 @@ class Router {
 		$iterator = new RecursiveDirectoryIterator( $loader->location );
 
 		foreach ( new RecursiveIteratorIterator( $iterator ) as $item ) {
-			if ( ! $item->isFile() || $item->getExtension() !== 'php' ) {
+			if ( ! $item->isFile() || ! str_ends_with( $item->getFilename(), $loader->extension ) ) {
 				continue;
 			}
 
 			$path = str_replace(
 				array(
 					$loader->location . DIRECTORY_SEPARATOR,
-					'.php',
+					$loader->extension,
 				),
 				'',
 				$item->getPathname()

@@ -11,9 +11,10 @@ namespace ThemePlate\Bridge;
 class Loader {
 
 	public readonly string $location;
+	public readonly string $extension;
 
 
-	public function __construct( string $location ) {
+	public function __construct( string $location, string $suffix = '' ) {
 
 		if ( ! path_is_absolute( $location ) ) {
 			$location = Helpers::prepare_pathname( $location );
@@ -25,14 +26,15 @@ class Loader {
 			$location = Helpers::caller_path() . $location;
 		}
 
-		$this->location = $location;
+		$this->location  = $location;
+		$this->extension = Helpers::prepare_extension( $suffix );
 
 	}
 
 
 	protected function file_path( string $name ): string {
 
-		$path = realpath( $this->location . DIRECTORY_SEPARATOR . $name . '.php' );
+		$path = realpath( $this->location . DIRECTORY_SEPARATOR . $name . $this->extension );
 
 		if ( ! $path ) {
 			return '';

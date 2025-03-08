@@ -41,6 +41,19 @@ class Helpers {
 	}
 
 
+	public static function prepare_extension( string $value ): string {
+
+		$value = trim( $value, '. ' );
+
+		if ( $value ) {
+			$value .= '.';
+		}
+
+		return '.' . $value . 'php';
+
+	}
+
+
 	public static function header_key( string $value ): string {
 
 		$value = self::prepare_header( $value );

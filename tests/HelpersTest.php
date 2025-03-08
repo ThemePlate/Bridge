@@ -51,6 +51,22 @@ final class HelpersTest extends TestCase {
 		$this->assertSame( $expected, Helpers::prepare_header( $value ) );
 	}
 
+	public static function for_prepare_extension(): array {
+		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+		return array(
+			'empty' => array( '', '.php' ),
+			'correct' => array( 'action', '.action.php' ),
+			'dashed' => array( 'action-test', '.action-test.php' ),
+			'spaced'  => array( ' action test ', '.action test.php' ),
+		);
+		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+	}
+
+	#[DataProvider( 'for_prepare_extension' )]
+	public function test_prepare_extension( string $value, string $expected ): void {
+		$this->assertSame( $expected, Helpers::prepare_extension( $value ) );
+	}
+
 	public static function for_header_key(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 		return array(
