@@ -30,6 +30,8 @@ final class LoaderTest extends TestCase {
 			array( 'HelpersTest', true ),
 			array( 'RouterTest', true ),
 			array( 'nonexistent', false ),
+			array( '', false ),
+			array( ' ', false ),
 		);
 	}
 

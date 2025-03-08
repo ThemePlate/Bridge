@@ -150,6 +150,14 @@ final class RouterTest extends TestCase {
 		}
 	}
 
+	public function test_dispatch_invalid(): void {
+		$router = new Router( 'test' );
+
+		$this->assertFalse( $router->dispatch( ' ', '' ) );
+		$this->assertFalse( $router->dispatch( '', ' ' ) );
+		$this->assertFalse( $router->dispatch( ' ', ' ' ) );
+	}
+
 	#[DataProvider( 'for_init' )]
 	public function test_map( bool $is_known ): void {
 		$this->stub_wp_parse_url();
@@ -173,6 +181,15 @@ final class RouterTest extends TestCase {
 				$this->assertTrue( $router->dispatch( $route, $method ) );
 			}
 		}
+	}
+
+	public function test_map_invalid(): void {
+		$this->stub_wp_parse_url( 2 );
+
+		$router = new Router( 'test' );
+
+		$this->assertFalse( $router->map( 'test', fn (): true => true, '' ) );
+		$this->assertFalse( $router->map( 'test', fn (): true => true, ' ' ) );
 	}
 
 	#[DataProvider( 'for_init' )]

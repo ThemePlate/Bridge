@@ -70,9 +70,10 @@ class Router {
 			isset( $wp->query_vars[ $this->prefix ] ) &&
 			Helpers::valid_nonce( $this->prefix )
 		) {
-			$route = Helpers::prepare_pathname( $wp->query_vars[ $this->prefix ] );
+			$route  = Helpers::prepare_pathname( $wp->query_vars[ $this->prefix ] );
+			$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-			if ( $this->dispatch( $route, $_SERVER['REQUEST_METHOD'] ) ) {
+			if ( '' !== $route && $this->dispatch( $route, $method ) ) {
 				die();
 			}
 		}
@@ -102,6 +103,13 @@ class Router {
 
 
 	public function dispatch( string $route, string $method ): bool {
+
+		$route  = Helpers::prepare_pathname( $route );
+		$method = strtoupper( trim( $method ) );
+
+		if ( '' === $route || '' === $method ) {
+			return false;
+		}
 
 		$base_params = array(
 			'REQUEST_METHOD' => $method,
@@ -144,12 +152,19 @@ class Router {
 			return false;
 		}
 
+		if ( null !== $method ) {
+			$method = strtoupper( trim( $method ) );
+
+			if ( '' === $method ) {
+				return false;
+			}
+		}
+
 		if ( empty( $this->routes[ $route ] ) ) {
 			$this->routes[ $route ] = new Handler( $this->prefix );
 		}
 
 		$handler = $this->routes[ $route ];
-
 		$methods = $method ? array( $method ) : Helpers::HTTP_METHODS;
 
 		foreach ( $methods as $method ) {

@@ -68,6 +68,10 @@ class Loader {
 
 		$template = Helpers::prepare_pathname( $template );
 
+		if ( '' === $template ) {
+			return false;
+		}
+
 		return file_exists( $this->file_path( $template ) );
 
 	}
