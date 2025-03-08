@@ -135,10 +135,7 @@ class Router {
 		$handler = $this->routes[ $route ] ?? null;
 
 		if ( null !== $handler ) {
-			return call_user_func_array(
-				[ $handler, 'execute' ],
-				[ $method, $base_params ]
-			);
+			return $handler->execute( $method, $base_params );
 		}
 
 		foreach ( $this->routes as $pattern => $handler ) {
@@ -147,10 +144,7 @@ class Router {
 			if ( null !== $dynamic_params ) {
 				$params = array_merge( $base_params, $dynamic_params );
 
-				return call_user_func_array(
-					[ $handler, 'execute' ],
-					[ $method, $params ]
-				);
+				return $handler->execute( $method, $params );
 			}
 		}
 

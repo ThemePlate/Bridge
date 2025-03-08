@@ -48,7 +48,9 @@ class Handler {
 			$method = '*';
 		}
 
-		return call_user_func_array( $this->handles[ $method ], [ $params ] );
+		$callback = $this->handles[ $method ];
+
+		return $callback( $params );
 
 	}
 
