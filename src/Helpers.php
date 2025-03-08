@@ -116,7 +116,16 @@ class Helpers {
 			$route_part   = $route_parts[ $i ];
 
 			if ( preg_match( '/\[([^\]]+)\]/', $pattern_part, $matches ) ) {
-				$params[ $matches[1] ] = $route_part;
+				$param_name = $matches[1];
+
+				$pattern_regex = preg_quote( $pattern_part, '/' );
+				$pattern_regex = str_replace( '\[' . $param_name . '\]', '(.*)', $pattern_regex );
+
+				if ( preg_match( '/^' . $pattern_regex . '$/', $route_part, $value_matches ) ) {
+					$params[ $param_name ] = $value_matches[1];
+				} else {
+					$params[ $param_name ] = $route_part;
+				}
 			} elseif ( $pattern_part !== $route_part ) {
 				return null;
 			}

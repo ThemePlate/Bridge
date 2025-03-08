@@ -126,6 +126,19 @@ final class HelpersTest extends TestCase {
 					'user' => 'john',
 				),
 			),
+			'prefixed' => array(
+				'pattern' => 'site-[number]',
+				'route' => 'site-123',
+				'expected' => array( 'number' => '123' ),
+			),
+			'combined' => array(
+				'pattern' => 'site-[number]/reviews/[id]-live',
+				'route' => 'site-123/reviews/2-live',
+				'expected' => array(
+					'number' => '123',
+					'id' => '2',
+				),
+			),
 			'no_match' => array(
 				'pattern' => 'user/[name]',
 				'route' => 'user/john/extra',
