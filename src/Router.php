@@ -170,7 +170,7 @@ class Router {
 		}
 
 		if ( empty( $this->routes[ $route ] ) ) {
-			$this->routes[ $route ] = new Handler( $this->prefix );
+			$this->routes[ $route ] = new Handler();
 		}
 
 		$handler = $this->routes[ $route ];

@@ -18,7 +18,7 @@ class Handler {
 	protected array $handles = [];
 
 
-	public function __construct( string $identifier ) {
+	public function __construct( string $identifier = '' ) {
 
 		$this->identifier = Helpers::prepare_header( $identifier );
 
