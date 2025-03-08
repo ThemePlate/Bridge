@@ -36,13 +36,7 @@ final class HandlerTest extends TestCase {
 	public function test_execute_return_on_empty_identifier(): void {
 		$handler = new Handler( '' );
 
-		$handler->handle(
-			'OPTION',
-			function (): true {
-				return true;
-			}
-		);
-
+		$handler->handle( 'OPTION', fn(): true => true );
 		$this->assertTrue( $handler->execute( 'OPTION', array() ) );
 		$this->assertArrayNotHasKey( Helpers::header_key( $handler->identifier ), $_SERVER );
 		$this->assertNotEmpty( $_SERVER );
@@ -79,9 +73,7 @@ final class HandlerTest extends TestCase {
 
 	public function test_handle_wildcard(): void {
 		$handler  = new Handler( 'test' );
-		$callback = function (): true {
-			return true;
-		};
+		$callback = fn(): true => true;
 
 		$handler->handle( '*', $callback );
 		$handler->handle( 'GET', $callback );

@@ -39,9 +39,7 @@ final class RouterTest extends TestCase {
 
 	protected function stub_wp_parse_url( int $count = 1 ): void {
 		expect( 'wp_parse_url' )->times( $count )->andReturnUsing(
-			function ( ...$args ): mixed {
-				return call_user_func_array( 'parse_url', $args );
-			}
+			fn( ...$args ): mixed => call_user_func_array( 'parse_url', $args )
 		);
 	}
 
@@ -65,7 +63,7 @@ final class RouterTest extends TestCase {
 
 		$this->stub_wp_parse_url();
 		$router->init();
-		$this->assertSame( $wanted ? 10 : false, has_action( 'wp', array( $router, 'route' ) ) );
+		$this->assertSame( $wanted ? 10 : false, has_action( 'wp', $router->route( ... ) ) );
 	}
 
 	public static function for_is_valid(): array {
@@ -140,12 +138,7 @@ final class RouterTest extends TestCase {
 		$router  = new Router( $p_id_r );
 		$handler = new Handler( $p_id_r );
 
-		$handler->handle(
-			'POST',
-			function (): true {
-				return true;
-			}
-		);
+		$handler->handle( 'POST', fn(): true => true );
 		$router->add( $p_id_r, $handler );
 
 		if ( $is_known ) {
@@ -171,9 +164,7 @@ final class RouterTest extends TestCase {
 
 		$route  = 'tester';
 		$router = new Router( 'test' );
-		$cbf    = function (): true {
-			return true;
-		};
+		$cbf    = fn(): true => true;
 
 		if ( $is_known ) {
 			$router->map( $route, $cbf, 'OPTION' );
@@ -208,12 +199,7 @@ final class RouterTest extends TestCase {
 			$this->stub_wp_parse_url( count( Helpers::HTTP_METHODS ) );
 
 			foreach ( Helpers::HTTP_METHODS as $method ) {
-				$router->$method(
-					$route,
-					function (): true {
-						return true;
-					}
-				);
+				$router->$method( $route, fn(): true => true );
 			}
 		}
 

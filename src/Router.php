@@ -36,7 +36,7 @@ class Router {
 		add_rewrite_endpoint( $this->prefix, EP_ROOT );
 
 		if ( $this->is_valid( $_SERVER['REQUEST_URI'] ) ) {
-			add_action( 'wp', array( $this, 'route' ) );
+			add_action( 'wp', $this->route( ... ) );
 		}
 
 	}
@@ -258,7 +258,7 @@ class Router {
 			$this->add( $path, $handler );
 		}
 
-		$handler->handle( '*', array( $loader, 'load' ) );
+		$handler->handle( '*', $loader->load( ... ) );
 
 		return true;
 
