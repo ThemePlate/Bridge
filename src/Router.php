@@ -48,7 +48,12 @@ class Router {
 
 	public function is_valid( string $endpoint, bool $with_prefix = true ): bool {
 
-		$path  = wp_parse_url( $endpoint, PHP_URL_PATH );
+		$path = wp_parse_url( $endpoint, PHP_URL_PATH );
+
+		if ( false === $path || null === $path ) {
+			return false;
+		}
+
 		$clean = Helpers::prepare_pathname( $path );
 		$parts = explode( '/', $clean );
 
