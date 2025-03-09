@@ -42,16 +42,9 @@ class Router {
 
 		add_rewrite_endpoint( $this->prefix, EP_ROOT );
 
-		if ( $this->is_valid( $_SERVER['REQUEST_URI'] ) ) {
+		if ( Helpers::valid_route( $_SERVER['REQUEST_URI'], $this->prefix ) ) {
 			add_action( 'wp', $this->route( ... ) );
 		}
-
-	}
-
-
-	public function is_valid( string $endpoint, bool $with_prefix = true ): bool {
-
-		return Helpers::valid_route( $endpoint, $with_prefix ? $this->prefix : '' );
 
 	}
 
@@ -80,7 +73,7 @@ class Router {
 
 		$route = Helpers::prepare_pathname( $route );
 
-		if ( ! $this->is_valid( $route, false ) ) {
+		if ( ! Helpers::valid_route( $route ) ) {
 			return false;
 		}
 
@@ -137,7 +130,7 @@ class Router {
 
 		$route = Helpers::prepare_pathname( $route );
 
-		if ( ! $this->is_valid( $route, false ) ) {
+		if ( ! Helpers::valid_route( $route ) ) {
 			return false;
 		}
 

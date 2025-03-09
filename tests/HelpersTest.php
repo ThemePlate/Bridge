@@ -7,8 +7,15 @@ namespace Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ThemePlate\Bridge\Helpers;
 use PHPUnit\Framework\TestCase;
+use function Brain\Monkey\Functions\expect;
 
 final class HelpersTest extends TestCase {
+	public static function stub_wp_parse_url( int $count = 1 ): void {
+		expect( 'wp_parse_url' )->times( $count )->andReturnUsing(
+			fn( ...$args ): mixed => call_user_func_array( 'parse_url', $args )
+		);
+	}
+
 	public static function for_prepare_pathname(): array {
 		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
 		return [
@@ -108,6 +115,45 @@ final class HelpersTest extends TestCase {
 		}
 
 		$this->assertSame( $expected, Helpers::header_valid( $value ) );
+	}
+
+	public static function for_valid_route(): array {
+		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+		return [
+			'base' => [ 'test', true ],
+			'sub' => [ 'test/this', true ],
+			'slashed' => [ '/test/this/', true ],
+			'extras' => [ '//test//this', false ],
+			'deep' => [ '/test/this/please// ', true ],
+			'unknown' => [ 'tester', false ],
+			'empty' => [ '', false ],
+			'root' => [ '/', false ],
+			'dynamic' => [ 'test/[this]', true ],
+			'dynamic empty' => [ 'test/[]', false ],
+			'dynamic deep' => [ 'test/[this]/[that]', true ],
+			'dynamic deep empty' => [ 'test/[this]/[]', false ],
+			'no closing bracket' => [ 'test/[this', false ],
+			'no opening bracket' => [ 'test/this]', false ],
+			'multiple opening' => [ 'test/[[this]', false ],
+			'multiple closing' => [ 'test/[that]]', false ],
+			'improper opening' => [ 'test/[this[that]', false ],
+			'improper closing' => [ 'test/[this]that]', false ],
+			'wrong brackets' => [ 'test/]this/[that', false ],
+		];
+		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+	}
+
+	#[DataProvider( 'for_valid_route' )]
+	public function test_valid_route( string $path, bool $is_valid ): void {
+		$this->stub_wp_parse_url();
+
+		$result = Helpers::valid_route( $path, 'test' );
+
+		if ( $is_valid ) {
+			$this->assertTrue( $result );
+		} else {
+			$this->assertFalse( $result );
+		}
 	}
 
 	public static function for_dynamic_match(): array {

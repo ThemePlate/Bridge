@@ -39,12 +39,6 @@ final class RouterTest extends TestCase {
 		$this->assertSame( $expected, ( new Router( $prefix ) )->prefix );
 	}
 
-	protected function stub_wp_parse_url( int $count = 1 ): void {
-		expect( 'wp_parse_url' )->times( $count )->andReturnUsing(
-			fn( ...$args ): mixed => call_user_func_array( 'parse_url', $args )
-		);
-	}
-
 	public static function for_init(): array {
 		defined( 'EP_ROOT' ) || define( 'EP_ROOT', 64 );
 
@@ -63,52 +57,13 @@ final class RouterTest extends TestCase {
 
 		expect( 'add_rewrite_endpoint' )->once()->with( $prefix, EP_ROOT );
 
-		$this->stub_wp_parse_url();
+		HelpersTest::stub_wp_parse_url();
 		$router->init();
 		$this->assertSame( $wanted ? 10 : false, has_action( 'wp', $router->route( ... ) ) );
 	}
 
-	public static function for_is_valid(): array {
-		// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-		return [
-			'base' => [ 'test', true ],
-			'sub' => [ 'test/this', true ],
-			'slashed' => [ '/test/this/', true ],
-			'extras' => [ '//test//this', false ],
-			'deep' => [ '/test/this/please// ', true ],
-			'unknown' => [ 'tester', false ],
-			'empty' => [ '', false ],
-			'root' => [ '/', false ],
-			'dynamic' => [ 'test/[this]', true ],
-			'dynamic empty' => [ 'test/[]', false ],
-			'dynamic deep' => [ 'test/[this]/[that]', true ],
-			'dynamic deep empty' => [ 'test/[this]/[]', false ],
-			'no closing bracket' => [ 'test/[this', false ],
-			'no opening bracket' => [ 'test/this]', false ],
-			'multiple opening' => [ 'test/[[this]', false ],
-			'multiple closing' => [ 'test/[that]]', false ],
-			'improper opening' => [ 'test/[this[that]', false ],
-			'improper closing' => [ 'test/[this]that]', false ],
-			'wrong brackets' => [ 'test/]this/[that', false ],
-		];
-		// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
-	}
-
-	#[DataProvider( 'for_is_valid' )]
-	public function test_is_valid( string $path, bool $is_valid ): void {
-		$this->stub_wp_parse_url();
-
-		$result = ( new Router( 'test' ) )->is_valid( $path );
-
-		if ( $is_valid ) {
-			$this->assertTrue( $result );
-		} else {
-			$this->assertFalse( $result );
-		}
-	}
-
 	public static function for_add_route(): array {
-		$values = self::for_is_valid();
+		$values = HelpersTest::for_valid_route();
 
 		$values['known'] = $values['unknown'];
 
@@ -121,7 +76,7 @@ final class RouterTest extends TestCase {
 
 	#[DataProvider( 'for_add_route' )]
 	public function test_add_route( string $path, bool $is_valid ): void {
-		$this->stub_wp_parse_url();
+		HelpersTest::stub_wp_parse_url();
 
 		$result = ( new Router( 'test' ) )->add( $path, new Handler( 'test' ) );
 
@@ -134,7 +89,7 @@ final class RouterTest extends TestCase {
 
 	#[DataProvider( 'for_init' )]
 	public function test_dispatch( bool $is_known ): void {
-		$this->stub_wp_parse_url();
+		HelpersTest::stub_wp_parse_url();
 
 		$p_id_r  = 'test';
 		$router  = new Router( $p_id_r );
@@ -160,7 +115,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_validator(): void {
-		$this->stub_wp_parse_url( 2 );
+		HelpersTest::stub_wp_parse_url( 2 );
 
 		$validator = new class() implements Validator {
 			public function __invoke( string $route, string $method ): bool {
@@ -184,7 +139,7 @@ final class RouterTest extends TestCase {
 
 	#[DataProvider( 'for_init' )]
 	public function test_map( bool $is_known ): void {
-		$this->stub_wp_parse_url();
+		HelpersTest::stub_wp_parse_url();
 
 		$route  = 'tester';
 		$router = new Router( 'test' );
@@ -206,7 +161,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_map_invalid(): void {
-		$this->stub_wp_parse_url( 2 );
+		HelpersTest::stub_wp_parse_url( 2 );
 
 		$router = new Router( 'test' );
 
@@ -220,7 +175,7 @@ final class RouterTest extends TestCase {
 		$router = new Router( 'test' );
 
 		if ( $is_known ) {
-			$this->stub_wp_parse_url( count( Helpers::HTTP_METHODS ) );
+			HelpersTest::stub_wp_parse_url( count( Helpers::HTTP_METHODS ) );
 
 			foreach ( Helpers::HTTP_METHODS as $method ) {
 				$router->$method( $route, fn(): true => true );
@@ -237,7 +192,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_load(): void {
-		$this->stub_wp_parse_url( 7 );
+		HelpersTest::stub_wp_parse_url( 7 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router( 'test' );
@@ -292,7 +247,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_load_suffixed(): void {
-		$this->stub_wp_parse_url( 3 );
+		HelpersTest::stub_wp_parse_url( 3 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router( 'test' );
@@ -330,7 +285,7 @@ final class RouterTest extends TestCase {
 
 	#[DataProviderExternal( HelpersTest::class, 'for_dynamic_match' )]
 	public function test_dynamic_routes( string $pattern, string $route, ?array $expected ): void {
-		$this->stub_wp_parse_url();
+		HelpersTest::stub_wp_parse_url();
 
 		$router   = new Router( 'test' );
 		$captured = null;
