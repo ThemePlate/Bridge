@@ -51,38 +51,7 @@ class Router {
 
 	public function is_valid( string $endpoint, bool $with_prefix = true ): bool {
 
-		$path = wp_parse_url( $endpoint, PHP_URL_PATH );
-
-		if ( false === $path || null === $path ) {
-			return false;
-		}
-
-		$clean = Helpers::prepare_pathname( $path );
-		$parts = explode( '/', $clean );
-
-		if ( $with_prefix && $parts[0] !== $this->prefix ) {
-			return false;
-		}
-
-		$valid_parts = array_filter(
-			$parts,
-			function ( $part ): bool {
-				if ( '' === $part || '[]' === $part ) {
-					return false;
-				}
-
-				$open_count  = substr_count( $part, '[' );
-				$close_count = substr_count( $part, ']' );
-
-				if ( $open_count !== $close_count ) {
-					return false;
-				}
-
-				return ! ( $open_count && ! preg_match( '/^[^\[\]]*\[[^\[\]]+\][^\[\]]*$/', $part ) );
-			}
-		);
-
-		return count( $parts ) === count( $valid_parts );
+		return Helpers::valid_route( $endpoint, $with_prefix ? $this->prefix : '' );
 
 	}
 

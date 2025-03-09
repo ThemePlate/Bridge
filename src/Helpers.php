@@ -99,6 +99,45 @@ class Helpers {
 
 	}
 
+
+	public static function valid_route( string $value, string $with_prefix = '' ): bool {
+
+		$path = wp_parse_url( $value, PHP_URL_PATH );
+
+		if ( false === $path || null === $path ) {
+			return false;
+		}
+
+		$clean = self::prepare_pathname( $path );
+		$parts = explode( '/', $clean );
+
+		if ( '' !== $with_prefix && $parts[0] !== $with_prefix ) {
+			return false;
+		}
+
+		$valid_parts = array_filter(
+			$parts,
+			function ( $part ): bool {
+				if ( '' === $part || '[]' === $part ) {
+					return false;
+				}
+
+				$open_count  = substr_count( $part, '[' );
+				$close_count = substr_count( $part, ']' );
+
+				if ( $open_count !== $close_count ) {
+					return false;
+				}
+
+				return ! ( $open_count && ! preg_match( '/^[^\[\]]*\[[^\[\]]+\][^\[\]]*$/', $part ) );
+			}
+		);
+
+		return count( $parts ) === count( $valid_parts );
+
+	}
+
+
 	/**
 	 * @return array<string, string> | null
 	 */
