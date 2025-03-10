@@ -10,7 +10,7 @@ namespace ThemePlate\Bridge;
 
 class Handler {
 
-	public readonly string $identifier;
+	public readonly ?Validator $validator;
 
 	/**
 	 * @var array<string, callable>
@@ -18,9 +18,9 @@ class Handler {
 	protected array $handles = [];
 
 
-	public function __construct( string $identifier = '' ) {
+	public function __construct( ?Validator $validator = null ) {
 
-		$this->identifier = Helpers::prepare_header( $identifier );
+		$this->validator = $validator;
 
 	}
 
@@ -36,7 +36,9 @@ class Handler {
 	 */
 	public function execute( string $method, array $params ): bool {
 
-		if ( ! Helpers::header_valid( $this->identifier ) ) {
+		$validator = $this->validator;
+
+		if ( $validator instanceof Validator && ! $validator( $params['REQUEST_ROUTE'], $method ) ) {
 			return false;
 		}
 

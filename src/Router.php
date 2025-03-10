@@ -93,12 +93,6 @@ class Router {
 			return false;
 		}
 
-		$validator = $this->validator;
-
-		if ( $validator instanceof Validator && ! $validator( $route, $method ) ) {
-			return false;
-		}
-
 		$base_params = [
 			'REQUEST_METHOD' => $method,
 			'REQUEST_ROUTE'  => $route,
@@ -143,7 +137,7 @@ class Router {
 		}
 
 		if ( empty( $this->routes[ $route ] ) ) {
-			$this->routes[ $route ] = new Handler();
+			$this->routes[ $route ] = new Handler( $this->validator );
 		}
 
 		$handler = $this->routes[ $route ];

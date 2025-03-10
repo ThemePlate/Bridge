@@ -78,7 +78,7 @@ final class RouterTest extends TestCase {
 	public function test_add_route( string $path, bool $is_valid ): void {
 		HelpersTest::stub_wp_parse_url();
 
-		$result = ( new Router( 'test' ) )->add( $path, new Handler( 'test' ) );
+		$result = ( new Router( 'test' ) )->add( $path, new Handler() );
 
 		if ( $is_valid ) {
 			$this->assertTrue( $result );
@@ -93,7 +93,7 @@ final class RouterTest extends TestCase {
 
 		$p_id_r  = 'test';
 		$router  = new Router( $p_id_r );
-		$handler = new Handler( $p_id_r );
+		$handler = new Handler();
 
 		$handler->handle( 'POST', fn(): true => true );
 
@@ -197,12 +197,7 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertTrue(
-			$router->load(
-				new Loader( __DIR__ . '/templates' ),
-				new Handler( 'TPBT' )
-			)
-		);
+		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates' ), new Handler() ) );
 
 		$data = [
 			'call.txt'    => [ 'call', false ],
@@ -211,8 +206,6 @@ final class RouterTest extends TestCase {
 			'goodbye.php' => [ 'goodbye', true ],
 			'deep/fn.php' => [ 'deep/fn', true ],
 		];
-
-		$_SERVER['HTTP_TPBT'] = true;
 
 		foreach ( $data as $expected ) {
 			[$route, $is_valid] = $expected;
@@ -238,12 +231,7 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertFalse(
-			$router->load(
-				new Loader( $location ),
-				new Handler( 'TPBT' )
-			)
-		);
+		$this->assertFalse( $router->load( new Loader( $location ), new Handler() ) );
 	}
 
 	public function test_load_suffixed(): void {
@@ -252,12 +240,7 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertTrue(
-			$router->load(
-				new Loader( __DIR__ . '/templates', 'action' ),
-				new Handler( 'TPBT' )
-			)
-		);
+		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates', 'action' ), new Handler() ) );
 
 		$data = [
 			'call.txt'             => [ 'call', false ],
@@ -269,8 +252,6 @@ final class RouterTest extends TestCase {
 			'do.action.php'        => [ 'do', true ],
 			'test.action.php'      => [ 'test', true ],
 		];
-
-		$_SERVER['HTTP_TPBT'] = true;
 
 		foreach ( $data as $expected ) {
 			[$route, $is_valid] = $expected;

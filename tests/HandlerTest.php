@@ -7,16 +7,24 @@ namespace Tests;
 use stdClass;
 use ThemePlate\Bridge\Handler;
 use ThemePlate\Bridge\Helpers;
+use ThemePlate\Bridge\Validator;
 use PHPUnit\Framework\TestCase;
 
 final class HandlerTest extends TestCase {
 	public function test_execute_registered_method(): void {
 		$method  = 'name';
 		$params  = [
-			'first'  => '1',
-			'second' => 'two',
+			'REQUEST_ROUTE' => 'test',
+			'first'         => '1',
+			'second'        => 'two',
 		];
-		$handler = new Handler( 'test' );
+		$handler = new Handler(
+			new class() implements Validator {
+				public function __invoke( string $route, string $method ): bool {
+					return Helpers::header_valid( 'test' );
+				}
+			}
+		);
 
 		$handler->handle(
 			$method,
@@ -27,22 +35,20 @@ final class HandlerTest extends TestCase {
 			}
 		);
 
-		$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
+		$_SERVER[ Helpers::header_key( 'test' ) ] = true;
 
 		$this->assertTrue( $handler->execute( $method, $params ) );
 	}
 
 	public function test_execute_returns_false_if_method_not_registered(): void {
-		$this->assertFalse( ( new Handler( 'identifier' ) )->execute( 'method', [] ) );
+		$this->assertFalse( ( new Handler() )->execute( 'method', [] ) );
 	}
 
 	public function test_execute_return_on_empty_identifier(): void {
-		$handler = new Handler( '' );
+		$handler = new Handler();
 
 		$handler->handle( 'OPTION', fn(): true => true );
 		$this->assertTrue( $handler->execute( 'OPTION', [] ) );
-		$this->assertArrayNotHasKey( Helpers::header_key( $handler->identifier ), $_SERVER );
-		$this->assertNotEmpty( $_SERVER );
 	}
 
 	public function test_handle_multiple_methods(): void {
@@ -50,13 +56,26 @@ final class HandlerTest extends TestCase {
 			'method1' => [
 				true,
 				[
-					'first'  => 'false',
-					'second' => '',
+					'REQUEST_ROUTE' => 'test',
+					'first'         => 'false',
+					'second'        => '',
 				],
 			],
-			'method2' => [ false, [ 'first' => stdClass::class ] ],
+			'method2' => [
+				false,
+				[
+					'REQUEST_ROUTE' => 'test',
+					'first'         => stdClass::class,
+				],
+			],
 		];
-		$handler = new Handler( 'Custom-Request' );
+		$handler = new Handler(
+			new class() implements Validator {
+				public function __invoke( string $route, string $method ): bool {
+					return Helpers::header_valid( 'Custom-Request' );
+				}
+			}
+		);
 
 		foreach ( $handles as $method => $data ) {
 			$handler->handle(
@@ -68,7 +87,7 @@ final class HandlerTest extends TestCase {
 				}
 			);
 
-			$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
+			$_SERVER[ Helpers::header_key( 'Custom-Request' ) ] = true;
 
 			$result = $handler->execute( $method, $data[1] );
 
@@ -81,13 +100,11 @@ final class HandlerTest extends TestCase {
 	}
 
 	public function test_handle_wildcard(): void {
-		$handler  = new Handler( 'test' );
+		$handler  = new Handler();
 		$callback = fn(): true => true;
 
 		$handler->handle( '*', $callback );
 		$handler->handle( 'GET', $callback );
-
-		$_SERVER[ Helpers::header_key( $handler->identifier ) ] = true;
 
 		$this->assertTrue( $handler->execute( 'GET', [] ) );
 		$this->assertTrue( $handler->execute( 'OPTIONS', [] ) );
