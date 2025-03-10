@@ -166,7 +166,7 @@ class Helpers {
 				if ( preg_match( '/^' . $pattern_regex . '$/', $route_part, $value_matches ) ) {
 					$params[ $param_name ] = $value_matches[1];
 				} else {
-					$params[ $param_name ] = $route_part;
+					return null;
 				}
 			} elseif ( $pattern_part !== $route_part ) {
 				return null;

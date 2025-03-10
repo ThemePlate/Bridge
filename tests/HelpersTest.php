@@ -177,6 +177,21 @@ final class HelpersTest extends TestCase {
 				'route' => 'site-123',
 				'expected' => [ 'number' => '123' ],
 			],
+			'prefix_unmatched' => [
+				'pattern' => 'site-[number]',
+				'route' => 'site123',
+				'expected' => null,
+			],
+			'suffix' => [
+				'pattern' => '[id]-live',
+				'route' => '2-live',
+				'expected' => [ 'id' => '2' ],
+			],
+			'suffix_unmatched' => [
+				'pattern' => '[id]-live',
+				'route' => '2live',
+				'expected' => null,
+			],
 			'combined' => [
 				'pattern' => 'site-[number]/reviews/[id]-live',
 				'route' => 'site-123/reviews/2-live',

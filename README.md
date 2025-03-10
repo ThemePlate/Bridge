@@ -24,6 +24,8 @@ $router->any(
 // `<WP_HOME>/test/[filename]`
 $router->load( new Loader( __DIR__ . '/templates' ) );
 // only handles .php files
+$router->load( new Loader( __DIR__ . '/templates', 'action' ) );
+// only handles .action.php files
 
 add_action( 'init', array( $router, 'init' ) );
 ```
