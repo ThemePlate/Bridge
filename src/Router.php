@@ -194,7 +194,7 @@ class Router {
 	}
 
 
-	public function load( Loader $loader, Handler $handler ): bool {
+	public function load( Loader $loader, ?Validator $validator = null ): bool {
 
 		if ( ! is_dir( $loader->location ) || ! is_readable( $loader->location ) ) {
 			return false;
@@ -216,10 +216,11 @@ class Router {
 				$item->getPathname()
 			);
 
-			$this->add( $path, $handler );
-		}
+			$handler = new Handler( $validator ?? $this->validator );
 
-		$handler->handle( '*', $loader->load( ... ) );
+			$this->add( $path, $handler );
+			$handler->handle( '*', $loader->load( ... ) );
+		}
 
 		return true;
 

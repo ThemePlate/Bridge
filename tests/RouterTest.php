@@ -197,7 +197,7 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates' ), new Handler() ) );
+		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates' ) ) );
 
 		$data = [
 			'call.txt'    => [ 'call', false ],
@@ -231,7 +231,33 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertFalse( $router->load( new Loader( $location ), new Handler() ) );
+		$this->assertFalse( $router->load( new Loader( $location ) ) );
+	}
+
+	public function test_load_validator(): void {
+		HelpersTest::stub_wp_parse_url( 7 );
+		expect( 'path_is_absolute' )->once()->andReturn( true );
+
+		$router = new Router( 'test' );
+
+		$this->assertTrue(
+			$router->load(
+				new Loader( __DIR__ . '/templates' ),
+				new class() implements Validator {
+					public function __invoke( string $route, string $method ): bool {
+						return 'GET' === $method;
+					}
+				}
+			)
+		);
+
+		foreach ( Helpers::HTTP_METHODS as $method ) {
+			if ( 'GET' === $method ) {
+				$this->assertTrue( $router->dispatch( 'hello', $method ) );
+			} else {
+				$this->assertFalse( $router->dispatch( 'hello', $method ) );
+			}
+		}
 	}
 
 	public function test_load_suffixed(): void {
@@ -240,7 +266,7 @@ final class RouterTest extends TestCase {
 
 		$router = new Router( 'test' );
 
-		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates', 'action' ), new Handler() ) );
+		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates', 'action' ) ) );
 
 		$data = [
 			'call.txt'             => [ 'call', false ],
