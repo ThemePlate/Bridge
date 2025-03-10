@@ -78,7 +78,7 @@ final class RouterTest extends TestCase {
 	public function test_add_route( string $path, bool $is_valid ): void {
 		HelpersTest::stub_wp_parse_url();
 
-		$result = ( new Router( 'test' ) )->add( $path, new Handler() );
+		$result = ( new Router( 'test' ) )->add( new Handler( $path ) );
 
 		if ( $is_valid ) {
 			$this->assertTrue( $result );
@@ -93,11 +93,11 @@ final class RouterTest extends TestCase {
 
 		$p_id_r  = 'test';
 		$router  = new Router( $p_id_r );
-		$handler = new Handler();
+		$handler = new Handler( $p_id_r );
 
 		$handler->handle( 'POST', fn(): true => true );
 
-		$router->add( $p_id_r, $handler );
+		$router->add( $handler );
 
 		if ( $is_known ) {
 			$this->assertTrue( $router->dispatch( $p_id_r, 'POST' ) );
@@ -295,18 +295,15 @@ final class RouterTest extends TestCase {
 		HelpersTest::stub_wp_parse_url();
 
 		$router   = new Router( 'test' );
-		$captured = null;
-		$handler  = $this->createMock( Handler::class );
+		$captured = [];
 
-		$handler->method( 'execute' )
-			->willReturnCallback(
-				function ( $method, $params ) use ( &$captured ): true {
-					$captured = $params;
-					return true;
-				}
-			);
-
-		$router->add( $pattern, $handler );
+		$router->get(
+			$pattern,
+			function ( array $params ) use ( &$captured ): true {
+				$captured = $params;
+				return true;
+			}
+		);
 
 		$result = $router->dispatch( $route, 'GET' );
 
@@ -316,6 +313,7 @@ final class RouterTest extends TestCase {
 			$this->assertTrue( $result );
 
 			foreach ( $expected as $key => $value ) {
+				$this->assertArrayHasKey( $key, $captured );
 				$this->assertSame( $value, $captured[ $key ] );
 			}
 		}

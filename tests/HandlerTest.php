@@ -14,11 +14,11 @@ final class HandlerTest extends TestCase {
 	public function test_execute_registered_method(): void {
 		$method  = 'name';
 		$params  = [
-			'REQUEST_ROUTE' => 'test',
-			'first'         => '1',
-			'second'        => 'two',
+			'first'  => '1',
+			'second' => 'two',
 		];
 		$handler = new Handler(
+			'test',
 			new class() implements Validator {
 				public function __invoke( string $route, string $method ): bool {
 					return Helpers::header_valid( 'test' );
@@ -41,11 +41,11 @@ final class HandlerTest extends TestCase {
 	}
 
 	public function test_execute_returns_false_if_method_not_registered(): void {
-		$this->assertFalse( ( new Handler() )->execute( 'method', [] ) );
+		$this->assertFalse( ( new Handler( 'test' ) )->execute( 'method', [] ) );
 	}
 
 	public function test_execute_return_on_empty_identifier(): void {
-		$handler = new Handler();
+		$handler = new Handler( 'test' );
 
 		$handler->handle( 'OPTION', fn(): true => true );
 		$this->assertTrue( $handler->execute( 'OPTION', [] ) );
@@ -56,20 +56,19 @@ final class HandlerTest extends TestCase {
 			'method1' => [
 				true,
 				[
-					'REQUEST_ROUTE' => 'test',
-					'first'         => 'false',
-					'second'        => '',
+					'first'  => 'false',
+					'second' => '',
 				],
 			],
 			'method2' => [
 				false,
 				[
-					'REQUEST_ROUTE' => 'test',
-					'first'         => stdClass::class,
+					'first' => stdClass::class,
 				],
 			],
 		];
 		$handler = new Handler(
+			'test',
 			new class() implements Validator {
 				public function __invoke( string $route, string $method ): bool {
 					return Helpers::header_valid( 'Custom-Request' );
@@ -100,7 +99,7 @@ final class HandlerTest extends TestCase {
 	}
 
 	public function test_handle_wildcard(): void {
-		$handler  = new Handler();
+		$handler  = new Handler( 'test' );
 		$callback = fn(): true => true;
 
 		$handler->handle( '*', $callback );

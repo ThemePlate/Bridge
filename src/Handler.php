@@ -10,6 +10,8 @@ namespace ThemePlate\Bridge;
 
 class Handler {
 
+	public readonly string $route;
+
 	public readonly ?Validator $validator;
 
 	/**
@@ -18,8 +20,9 @@ class Handler {
 	protected array $handles = [];
 
 
-	public function __construct( ?Validator $validator = null ) {
+	public function __construct( string $route, ?Validator $validator = null ) {
 
+		$this->route     = Helpers::prepare_pathname( $route );
 		$this->validator = $validator;
 
 	}
@@ -38,7 +41,7 @@ class Handler {
 
 		$validator = $this->validator;
 
-		if ( $validator instanceof Validator && ! $validator( $params['REQUEST_ROUTE'], $method ) ) {
+		if ( $validator instanceof Validator && ! $validator( $this->route, $method ) ) {
 			return false;
 		}
 

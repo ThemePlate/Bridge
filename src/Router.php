@@ -69,9 +69,9 @@ class Router {
 	}
 
 
-	public function add( string $route, Handler $handler ): bool {
+	public function add( Handler $handler ): bool {
 
-		$route = Helpers::prepare_pathname( $route );
+		$route = $handler->route;
 
 		if ( ! Helpers::valid_route( $route ) ) {
 			return false;
@@ -137,7 +137,7 @@ class Router {
 		}
 
 		if ( empty( $this->routes[ $route ] ) ) {
-			$this->routes[ $route ] = new Handler( $this->validator );
+			$this->routes[ $route ] = new Handler( $route, $this->validator );
 		}
 
 		$handler = $this->routes[ $route ];
@@ -216,9 +216,9 @@ class Router {
 				$item->getPathname()
 			);
 
-			$handler = new Handler( $validator ?? $this->validator );
+			$handler = new Handler( $path, $validator ?? $this->validator );
 
-			$this->add( $path, $handler );
+			$this->add( $handler );
 			$handler->handle( '*', $loader->load( ... ) );
 		}
 
