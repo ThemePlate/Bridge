@@ -198,7 +198,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_load(): void {
-		HelpersTest::stub_wp_parse_url( 7 );
+		HelpersTest::stub_wp_parse_url( 9 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router(
@@ -218,23 +218,27 @@ final class RouterTest extends TestCase {
 			'hello.php'   => [ 'hello', true ],
 			'goodbye.php' => [ 'goodbye', true ],
 			'deep/fn.php' => [ 'deep/fn', true ],
+			'site[id]'    => [ 'site123', false ],
+			'site-[id]'   => [ 'site-123', true ],
+			'deep/[file]' => [ 'deep/site123', true ],
+			'deep/[dash]' => [ 'deep/site-123', true ],
 		];
 
-		foreach ( $data as $expected ) {
+		foreach ( $data as $file => $expected ) {
 			[$route, $is_valid] = $expected;
 
 			$_SERVER['REQUEST_URI']    = $route;
 			$_SERVER['REQUEST_METHOD'] = 'GET';
 
 			if ( $is_valid ) {
-				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
+				$this->assertTrue( $router->dispatch( $route, 'GET' ), sprintf( 'Dispatching `%s` in `%s`', $route, $file ) );
 			} else {
-				$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+				$this->assertFalse( $router->dispatch( $route, 'GET' ), sprintf( 'Dispatching `%s` in `%s`', $route, $file ) );
 			}
 
 			// additional validator test
 			$_SERVER['REQUEST_METHOD'] = 'POST';
-			$this->assertFalse( $router->dispatch( $route, 'POST' ) );
+			$this->assertFalse( $router->dispatch( $route, 'POST' ), sprintf( 'Dispatching `%s` in `%s`', $route, $file ) );
 		}
 	}
 
@@ -255,7 +259,7 @@ final class RouterTest extends TestCase {
 	}
 
 	public function test_load_validator(): void {
-		HelpersTest::stub_wp_parse_url( 7 );
+		HelpersTest::stub_wp_parse_url( 9 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
 		$router = new Router( 'test' );
@@ -299,15 +303,19 @@ final class RouterTest extends TestCase {
 			'deep/only.action.php' => [ 'deep/only', true ],
 			'do.action.php'        => [ 'do', true ],
 			'test.action.php'      => [ 'test', true ],
+			'site[id]'             => [ 'site123', false ],
+			'site-[id]'            => [ 'site-123', false ],
+			'deep/[file]'          => [ 'deep/site123', false ],
+			'deep/[dash]'          => [ 'deep/site-123', false ],
 		];
 
-		foreach ( $data as $expected ) {
+		foreach ( $data as $file => $expected ) {
 			[$route, $is_valid] = $expected;
 
 			if ( $is_valid ) {
-				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
+				$this->assertTrue( $router->dispatch( $route, 'GET' ), sprintf( 'Dispatching `%s` in `%s`', $route, $file ) );
 			} else {
-				$this->assertFalse( $router->dispatch( $route, 'GET' ) );
+				$this->assertFalse( $router->dispatch( $route, 'GET' ), sprintf( 'Dispatching `%s` in `%s`', $route, $file ) );
 			}
 		}
 	}

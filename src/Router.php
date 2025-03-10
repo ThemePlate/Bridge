@@ -103,6 +103,8 @@ class Router {
 			$dynamic_params = Helpers::dynamic_match( $pattern, $route );
 
 			if ( null !== $dynamic_params ) {
+				$dynamic_params['REQUEST_ROUTE'] = $route;
+
 				return $handler->execute( $method, $dynamic_params );
 			}
 		}
@@ -214,6 +216,25 @@ class Router {
 			$handler->handle(
 				'*',
 				function ( array $segments ) use ( $loader, $path ): bool {
+					if ( [] !== $segments ) {
+						$current = $segments['REQUEST_ROUTE'];
+						$parsed  = $path;
+
+						unset( $segments['REQUEST_ROUTE'] );
+
+						foreach ( $segments as $segment => $value ) {
+							if ( ! str_contains( $parsed, '[' . $segment . ']' ) ) {
+								return false;
+							}
+
+							$parsed = str_replace( '[' . $segment . ']', $value, $parsed );
+						}
+
+						if ( $current !== $parsed ) {
+							return false;
+						}
+					}
+
 					$segments['REQUEST_ROUTE'] = $path;
 
 					return $loader->load( $segments );
