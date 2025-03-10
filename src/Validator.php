@@ -10,6 +10,6 @@ namespace ThemePlate\Bridge;
 
 interface Validator {
 
-	public function __invoke( string $route, string $method ): bool;
+	public function __invoke( string ...$segments ): bool;
 
 }

@@ -20,7 +20,7 @@ final class HandlerTest extends TestCase {
 		$handler = new Handler(
 			'test',
 			new class() implements Validator {
-				public function __invoke( string $route, string $method ): bool {
+				public function __invoke( string ...$segments ): bool {
 					return Helpers::header_valid( 'test' );
 				}
 			}
@@ -70,7 +70,7 @@ final class HandlerTest extends TestCase {
 		$handler = new Handler(
 			'test',
 			new class() implements Validator {
-				public function __invoke( string $route, string $method ): bool {
+				public function __invoke( string ...$segments ): bool {
 					return Helpers::header_valid( 'Custom-Request' );
 				}
 			}

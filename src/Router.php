@@ -93,25 +93,17 @@ class Router {
 			return false;
 		}
 
-		$base_params = [
-			'REQUEST_METHOD' => $method,
-			'REQUEST_ROUTE'  => $route,
-			...$_REQUEST, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		];
-
 		$handler = $this->routes[ $route ] ?? null;
 
 		if ( null !== $handler ) {
-			return $handler->execute( $method, $base_params );
+			return $handler->execute( $method );
 		}
 
 		foreach ( $this->routes as $pattern => $handler ) {
 			$dynamic_params = Helpers::dynamic_match( $pattern, $route );
 
 			if ( null !== $dynamic_params ) {
-				$params = array_merge( $base_params, $dynamic_params );
-
-				return $handler->execute( $method, $params );
+				return $handler->execute( $method, $dynamic_params );
 			}
 		}
 
@@ -219,7 +211,14 @@ class Router {
 			$handler = new Handler( $path, $validator ?? $this->validator );
 
 			$this->add( $handler );
-			$handler->handle( '*', $loader->load( ... ) );
+			$handler->handle(
+				'*',
+				function ( array $segments ) use ( $loader, $path ): bool {
+					$segments['REQUEST_ROUTE'] = $path;
+
+					return $loader->load( $segments );
+				}
+			);
 		}
 
 		return true;

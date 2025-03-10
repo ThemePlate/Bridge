@@ -8,10 +8,17 @@ $router = new ThemePlate\Bridge\Router( 'test' );
 // `<WP_HOME>/test/route`
 $router->map(
 	'route',
-	function ( array $params ): bool {
-		// ...$_REQUEST
-	},
-	'GET'
+	function (): bool {
+		// ...
+	}
+);
+
+// `<WP_HOME>/test/[path]`
+$router->any(
+	'[path]',
+	function ( array $segments ): bool {
+		// $segments = [path]
+	}
 );
 
 // `<WP_HOME>/test/[filename]`

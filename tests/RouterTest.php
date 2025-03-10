@@ -118,9 +118,9 @@ final class RouterTest extends TestCase {
 		HelpersTest::stub_wp_parse_url( 2 );
 
 		$validator = new class() implements Validator {
-			public function __invoke( string $route, string $method ): bool {
-				return match ( $route ) {
-					'test' => 'GET' === $method,
+			public function __invoke( string ...$segments ): bool {
+				return match ( $_SERVER['REQUEST_URI'] ) {
+					'test' => 'GET' === $_SERVER['REQUEST_METHOD'],
 					default => false,
 				};
 			}
@@ -131,9 +131,15 @@ final class RouterTest extends TestCase {
 		$router->any( 'test', fn(): true => true );
 		$router->any( 'unknown', fn(): true => true );
 
+		$_SERVER['REQUEST_URI']    = 'test';
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->assertTrue( $router->dispatch( 'test', 'GET' ) );
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->assertFalse( $router->dispatch( 'test', 'POST' ) );
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$this->assertFalse( $router->dispatch( 'test', 'DELETE' ) );
+		$_SERVER['REQUEST_URI']    = 'unknown';
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->assertFalse( $router->dispatch( 'unknown', 'GET' ) );
 	}
 
@@ -195,7 +201,14 @@ final class RouterTest extends TestCase {
 		HelpersTest::stub_wp_parse_url( 7 );
 		expect( 'path_is_absolute' )->once()->andReturn( true );
 
-		$router = new Router( 'test' );
+		$router = new Router(
+			'test',
+			new class() implements Validator {
+				public function __invoke( string ...$segments ): bool {
+					return 'GET' === $_SERVER['REQUEST_METHOD'];
+				}
+			}
+		);
 
 		$this->assertTrue( $router->load( new Loader( __DIR__ . '/templates' ) ) );
 
@@ -210,11 +223,18 @@ final class RouterTest extends TestCase {
 		foreach ( $data as $expected ) {
 			[$route, $is_valid] = $expected;
 
+			$_SERVER['REQUEST_URI']    = $route;
+			$_SERVER['REQUEST_METHOD'] = 'GET';
+
 			if ( $is_valid ) {
 				$this->assertTrue( $router->dispatch( $route, 'GET' ) );
 			} else {
 				$this->assertFalse( $router->dispatch( $route, 'GET' ) );
 			}
+
+			// additional validator test
+			$_SERVER['REQUEST_METHOD'] = 'POST';
+			$this->assertFalse( $router->dispatch( $route, 'POST' ) );
 		}
 	}
 
@@ -244,14 +264,16 @@ final class RouterTest extends TestCase {
 			$router->load(
 				new Loader( __DIR__ . '/templates' ),
 				new class() implements Validator {
-					public function __invoke( string $route, string $method ): bool {
-						return 'GET' === $method;
+					public function __invoke( string ...$segments ): bool {
+						return 'GET' === $_SERVER['REQUEST_METHOD'];
 					}
 				}
 			)
 		);
 
 		foreach ( Helpers::HTTP_METHODS as $method ) {
+			$_SERVER['REQUEST_METHOD'] = $method;
+
 			if ( 'GET' === $method ) {
 				$this->assertTrue( $router->dispatch( 'hello', $method ) );
 			} else {

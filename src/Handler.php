@@ -37,11 +37,11 @@ class Handler {
 	/**
 	 * @param array<string, string> $params
 	 */
-	public function execute( string $method, array $params ): bool {
+	public function execute( string $method, array $params = [] ): bool {
 
 		$validator = $this->validator;
 
-		if ( $validator instanceof Validator && ! $validator( $this->route, $method ) ) {
+		if ( $validator instanceof Validator && ! $validator( ...$params ) ) {
 			return false;
 		}
 
