@@ -93,13 +93,6 @@ class Helpers {
 	}
 
 
-	public static function valid_nonce( string $value ): bool {
-
-		return isset( $_SERVER['HTTP_TPB_NONCE'] ) && wp_verify_nonce( $_SERVER['HTTP_TPB_NONCE'], $value );
-
-	}
-
-
 	public static function valid_route( string $value, string $with_prefix = '' ): bool {
 
 		$path = wp_parse_url( $value, PHP_URL_PATH );

@@ -203,7 +203,7 @@ class Router {
 				continue;
 			}
 
-			$path = str_replace(
+			$path = (string) str_replace(
 				[
 					$loader->location . DIRECTORY_SEPARATOR,
 					$loader->extension,
@@ -236,6 +236,7 @@ class Router {
 
 					$segments['REQUEST_ROUTE'] = $path;
 
+					// @phpstan-ignore argument.type
 					return $loader->load( $segments );
 				}
 			);
