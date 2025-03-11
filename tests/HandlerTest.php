@@ -28,8 +28,14 @@ final class HandlerTest extends TestCase {
 
 		$handler->handle(
 			$method,
-			function ( $p ) use ( $params ): true {
-				$this->assertSame( $params, $p );
+			function ( string $second, string $first ) use ( $params ): true {
+				$this->assertSame(
+					$params,
+					[
+						'first'  => $first,
+						'second' => $second,
+					]
+				);
 
 				return true;
 			}
@@ -79,7 +85,7 @@ final class HandlerTest extends TestCase {
 		foreach ( $handles as $method => $data ) {
 			$handler->handle(
 				$method,
-				function ( $p ) use ( $data ): bool {
+				function ( string ...$p ) use ( $data ): bool {
 					$this->assertSame( $data[1], $p );
 
 					return $data[0];

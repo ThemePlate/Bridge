@@ -18,6 +18,8 @@ class Router {
 
 	public readonly ?Validator $validator;
 
+	protected string $current_route;
+
 	/**
 	 * @var array<string, Handler>
 	 */
@@ -95,6 +97,8 @@ class Router {
 
 		$handler = $this->routes[ $route ] ?? null;
 
+		$this->current_route = $route;
+
 		if ( null !== $handler ) {
 			return $handler->execute( $method );
 		}
@@ -103,8 +107,6 @@ class Router {
 			$dynamic_params = Helpers::dynamic_match( $pattern, $route );
 
 			if ( null !== $dynamic_params ) {
-				$dynamic_params['REQUEST_ROUTE'] = $route;
-
 				return $handler->execute( $method, $dynamic_params );
 			}
 		}
@@ -215,12 +217,9 @@ class Router {
 			$this->add( $handler );
 			$handler->handle(
 				'*',
-				function ( array $segments ) use ( $loader, $path ): bool {
+				function ( string ...$segments ) use ( $loader, $path ): bool {
 					if ( [] !== $segments ) {
-						$current = $segments['REQUEST_ROUTE'];
-						$parsed  = $path;
-
-						unset( $segments['REQUEST_ROUTE'] );
+						$parsed = $path;
 
 						foreach ( $segments as $segment => $value ) {
 							if ( ! str_contains( $parsed, '[' . $segment . ']' ) ) {
@@ -230,7 +229,7 @@ class Router {
 							$parsed = str_replace( '[' . $segment . ']', $value, $parsed );
 						}
 
-						if ( $current !== $parsed ) {
+						if ( $this->current_route !== $parsed ) {
 							return false;
 						}
 					}

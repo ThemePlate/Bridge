@@ -55,7 +55,7 @@ class Handler {
 
 		$callback = $this->handles[ $method ];
 
-		return $callback( $params );
+		return $callback( ...$params );
 
 	}
 

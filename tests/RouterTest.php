@@ -329,7 +329,7 @@ final class RouterTest extends TestCase {
 
 		$router->get(
 			$pattern,
-			function ( array $params ) use ( &$captured ): true {
+			function ( string ...$params ) use ( &$captured ): true {
 				$captured = $params;
 				return true;
 			}

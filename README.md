@@ -16,8 +16,8 @@ $router->map(
 // `<WP_HOME>/test/[path]`
 $router->any(
 	'[path]',
-	function ( array $segments ): bool {
-		// $segments = [path]
+	function ( string $path ): bool {
+		// $path = [path]
 	}
 );
 
