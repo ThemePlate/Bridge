@@ -64,7 +64,8 @@ class Loader {
 
 		// @phpstan-ignore arguments.count
 		return ( function (): bool {
-			$params = func_get_arg( 0 );
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
+			extract( func_get_arg( 0 ) );
 
 			return (bool) include $this->file_path( func_get_arg( 1 ) );
 		} )( $data, $template );
